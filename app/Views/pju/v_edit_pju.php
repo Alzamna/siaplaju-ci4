@@ -170,7 +170,7 @@
 	</div>
 </main>
 
-<script src="<?php echo base_url('assets/js/core/jquery.min.js');?>"></script>
+<script src="<?php echo base_url('public/js/core/jquery.min.js');?>"></script>
 <script>
 	$(document).ready(function(){
 		var maxField = 3; //Input fields increment limitation

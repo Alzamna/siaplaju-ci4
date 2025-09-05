@@ -71,8 +71,8 @@
 						<?php } else { ?>
 						<div class="items-push js-gallery">
 							<div class="animated fadeIn">
-								<a class="img-link img-link-zoom-in img-thumb img-lightbox" href="<?php echo base_url('assets/img/image-not-found.png');?>">
-									<img class="img-fluid" style="height:200px" src="<?php echo base_url('assets/img/image-not-found.png');?>" alt="">
+								<a class="img-link img-link-zoom-in img-thumb img-lightbox" href="<?php echo base_url('public/img/image-not-found.png');?>">
+									<img class="img-fluid" style="height:200px" src="<?php echo base_url('public/img/image-not-found.png');?>" alt="">
 								</a>
 							</div>
 						</div>

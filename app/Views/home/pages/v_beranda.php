@@ -4,15 +4,15 @@
 
 			<!-- SLIDE  -->
 			<li data-transition="random" data-slotamount="1" data-masterspeed="1000" data-delay="5000" data-saveperformance="off" data-title="Slide 1">
-				<img src="<?php echo base_url('assets/home/images/1x1.png')?>" data-lazyload="<?php echo base_url('assets/home/images/slider/slider1.jpg')?>" alt="" data-bgfit="cover" data-bgrepeat="no-repeat" />
+				<img src="<?php echo base_url('public/home/images/1x1.png')?>" data-lazyload="<?php echo base_url('public/home/images/slider/slider1.jpg')?>" alt="" data-bgfit="cover" data-bgrepeat="no-repeat" />
 			</li>
 			
 			<li data-transition="random" data-slotamount="1" data-masterspeed="1000" data-delay="5000" data-saveperformance="off" data-title="Slide 2">
-				<img src="<?php echo base_url('assets/home/images/1x1.png')?>" data-lazyload="<?php echo base_url('assets/home/images/slider/slider2.jpg')?>" alt="" data-bgfit="cover" data-bgrepeat="no-repeat" />
+				<img src="<?php echo base_url('public/home/images/1x1.png')?>" data-lazyload="<?php echo base_url('public/home/images/slider/slider2.jpg')?>" alt="" data-bgfit="cover" data-bgrepeat="no-repeat" />
 			</li>
 			
 			<li data-transition="random" data-slotamount="1" data-masterspeed="1000" data-delay="5000" data-saveperformance="off" data-title="Slide 2">
-				<img src="<?php echo base_url('assets/home/images/1x1.png')?>" data-lazyload="<?php echo base_url('assets/home/images/slider/slider3.jpg')?>" alt="" data-bgfit="cover" data-bgrepeat="no-repeat" />
+				<img src="<?php echo base_url('public/home/images/1x1.png')?>" data-lazyload="<?php echo base_url('public/home/images/slider/slider3.jpg')?>" alt="" data-bgfit="cover" data-bgrepeat="no-repeat" />
 			</li>
 		</ul>
 
@@ -21,7 +21,7 @@
 </div>
 
 <section class="nopadding">
-	<img class="img-responsive" src="<?php echo base_url('assets/home/images/jargon.png');?>" alt="">
+	<img class="img-responsive" src="<?php echo base_url('public/home/images/jargon.png');?>" alt="">
 </section>
 
 <section class="nopadding">
@@ -30,7 +30,7 @@
 			<div class="row text-center">
 				<div class="col-lg-4 col-md-6 col-sm-12">
 					<a href="http://webgis.siaplaju.com">
-						<img class="img-responsive" style="height:150px;width:auto" src="<?php echo base_url('assets/home/images/icon/map-icon.jpg');?>" alt="" />
+						<img class="img-responsive" style="height:150px;width:auto" src="<?php echo base_url('public/home/images/icon/map-icon.jpg');?>" alt="" />
 						<div class="caption text-center margin-top-10">
 							<h4 class="nomargin">PETA PERLENGKAPAN JALAN</h4>
 							<small class="block">PETA DATABASE PERLENGKAPAN JALAN KABUPATEN TEGAL</small>
@@ -40,7 +40,7 @@
 				
 				<div class="col-lg-4 col-md-6 col-sm-12">
 					<a href="<?php echo site_url('pengaduan');?>">
-						<img class="img-responsive" style="height:150px;width:auto" src="<?php echo base_url('assets/home/images/icon/pengaduan-icon.jpg');?>" alt="" />
+						<img class="img-responsive" style="height:150px;width:auto" src="<?php echo base_url('public/home/images/icon/pengaduan-icon.jpg');?>" alt="" />
 						<div class="caption text-center margin-top-10">
 							<h4 class="nomargin">PENGADUAN</h4>
 							<small class="block">PENGADUAN LAMPU PJU BERMASALAH/MATI</small>
@@ -50,7 +50,7 @@
 				
 				<div class="col-lg-4 col-md-6 col-sm-12">
 					<a href="<?php echo site_url('aspirasi');?>">
-						<img class="img-responsive" style="height:150px;width:auto" src="<?php echo base_url('assets/home/images/icon/aspirasi-icon.jpg');?>" alt="" />
+						<img class="img-responsive" style="height:150px;width:auto" src="<?php echo base_url('public/home/images/icon/aspirasi-icon.jpg');?>" alt="" />
 						<div class="caption text-center margin-top-10">
 							<h4 class="nomargin">ASPIRASI</h4>
 							<small class="block">ASPIRASI MASYARAKAT LAMPU PJU</small>

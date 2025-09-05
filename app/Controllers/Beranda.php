@@ -3,7 +3,6 @@
 namespace App\Controllers;
 
 use App\Models\Model_app;
-use App\Models\ModelApp;
 
 class Beranda extends BaseController
 {

@@ -28,7 +28,7 @@
 							<div class="items-push">
 								<div class="animated fadeIn">
 									<div class="options-container">
-										<img class="img-fluid options-item" style="height:250px" src="<?php echo base_url('assets/img/image-not-found.png');?>" alt="">
+										<img class="img-fluid options-item" style="height:250px" src="<?php echo base_url('public/img/image-not-found.png');?>" alt="">
 									</div>
 								</div>
 							</div>

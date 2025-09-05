@@ -20,20 +20,20 @@
         <meta property="og:image" content="">
 
         <!-- Icons -->
-        <link rel="shortcut icon" href="<?php echo base_url('assets/img/favicons/favicon.png');?>">
-        <link rel="icon" type="image/png" sizes="192x192" href="<?php echo base_url('assets/img/favicons/favicon-192x192.png');?>">
-        <link rel="apple-touch-icon" sizes="180x180" href="<?php echo base_url('assets/img/favicons/apple-touch-icon-180x180.png');?>">
+        <link rel="shortcut icon" href="<?php echo base_url('public/img/favicons/favicon.png');?>">
+        <link rel="icon" type="image/png" sizes="192x192" href="<?php echo base_url('public/img/favicons/favicon-192x192.png');?>">
+        <link rel="apple-touch-icon" sizes="180x180" href="<?php echo base_url('public/img/favicons/apple-touch-icon-180x180.png');?>">
         <!-- END Icons -->
 
        <!-- Stylesheets -->
-		<link rel="stylesheet" href="<?php echo base_url('assets/js/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.min.css');?>">
-        <link rel="stylesheet" href="<?php echo base_url('assets/js/plugins/select2/select2.min.css');?>">
-        <link rel="stylesheet" href="<?php echo base_url('assets/js/plugins/select2/select2-bootstrap.min.css');?>">
-		<link rel="stylesheet" href="<?php echo base_url('assets/js/plugins/jquery-auto-complete/jquery.auto-complete.min.css');?>">
-		<link rel="stylesheet" href="<?php echo base_url('assets/js/plugins/datatables/dataTables.bootstrap4.min.css');?>">
-		<link rel="stylesheet" href="<?php echo base_url('assets/js/plugins/magnific-popup/magnific-popup.min.css');?>">
+		<link rel="stylesheet" href="<?php echo base_url('public/js/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.min.css');?>">
+        <link rel="stylesheet" href="<?php echo base_url('public/js/plugins/select2/select2.min.css');?>">
+        <link rel="stylesheet" href="<?php echo base_url('public/js/plugins/select2/select2-bootstrap.min.css');?>">
+		<link rel="stylesheet" href="<?php echo base_url('public/js/plugins/jquery-auto-complete/jquery.auto-complete.min.css');?>">
+		<link rel="stylesheet" href="<?php echo base_url('public/js/plugins/datatables/dataTables.bootstrap4.min.css');?>">
+		<link rel="stylesheet" href="<?php echo base_url('public/js/plugins/magnific-popup/magnific-popup.min.css');?>">
 		
-        <link rel="stylesheet" id="css-main" href="<?php echo base_url('assets/css/codebase.min.css');?>">
+        <link rel="stylesheet" id="css-main" href="<?php echo base_url('public/css/codebase.min.css');?>">
 		
 		<?php 
 		if(isset($peta)){
@@ -138,14 +138,14 @@
                         <div class="content-side content-side-full content-side-user px-10 align-parent">
                             <!-- Visible only in mini mode -->
                             <div class="sidebar-mini-visible-b align-v animated fadeIn">
-                                <img class="img-avatar img-avatar32" src="<?php echo base_url('assets/img/avatars/avatar15.jpg');?>" alt="">
+                                <img class="img-avatar img-avatar32" src="<?php echo base_url('public/img/avatars/avatar15.jpg');?>" alt="">
                             </div>
                             <!-- END Visible only in mini mode -->
 
                             <!-- Visible only in normal mode -->
                             <div class="sidebar-mini-hidden-b text-center">
                                 <a class="img-link" href="#">
-                                    <img class="img-avatar" src="<?php echo base_url('assets/img/avatars/avatar15.jpg');?>" alt="">
+                                    <img class="img-avatar" src="<?php echo base_url('public/img/avatars/avatar15.jpg');?>" alt="">
                                 </a>
                                 <ul class="list-inline mt-10">
                                     <li class="list-inline-item">
