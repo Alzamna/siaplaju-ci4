@@ -1,22 +1,27 @@
-<?php 
-defined('BASEPATH') OR exit('No direct script access allowed');
+<?php
 
-class Dashboard extends CI_Controller {
-	function __construct(){
-		parent::__construct();
-		if($this->session->userdata('login') != 1 ){
-            redirect('login');
-        };
-	}
-	
-	public function index(){
-		$data=array(
-			'title'=>'Dashboard SIAPLAJU',
-			'open_dashboard'=>'open',
-			'aktif_dashboard'=>'active',
-		);
-		$this->load->view('pages/v_header',$data);
-		$this->load->view('pages/v_dashboard');
-		$this->load->view('pages/v_footer');
-	}
+namespace App\Controllers;
+
+class Dashboard extends BaseController
+{
+    public function __construct()
+    {
+        $session = session();
+        if ($session->get('login') != 1) {
+            return redirect()->to('/login');
+        }
+    }
+
+    public function index()
+    {
+        $data = [
+            'title'            => 'Dashboard SIAPLAJU',
+            'open_dashboard'   => 'open',
+            'aktif_dashboard'  => 'active',
+        ];
+
+        return view('pages/v_header', $data)
+             . view('pages/v_dashboard')
+             . view('pages/v_footer');
+    }
 }

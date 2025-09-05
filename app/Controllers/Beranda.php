@@ -1,22 +1,30 @@
-<?php 
-defined('BASEPATH') OR exit('No direct script access allowed');
+<?php
 
-class Beranda extends CI_Controller {
-	function __construct(){
-		parent::__construct();
-		$this->load->model('model_app','model');
-		$this->load->helper('date');
-		$this->load->helper('text');
-	}
-	
-	public function index(){
-		$data=array(
-			'title'=>'Sistem Informasi Alat Penerangan Lampu Jalan Umum Kabupaten Tegal',
-			'aktif_beranda'=>'active',
-			'dt_pengaduan'=>$this->model->getPengaduanBeranda(),
-		);
-		$this->load->view('home/pages/v_header',$data);
-		$this->load->view('home/pages/v_beranda');
-		$this->load->view('home/pages/v_footer');
-	}
+namespace App\Controllers;
+
+use App\Models\Model_app;
+use App\Models\ModelApp;
+
+class Beranda extends BaseController
+{
+    protected $model;
+
+    public function __construct()
+    {
+        $this->model = new Model_app();
+        helper(['date', 'text']); // load helper CI4
+    }
+
+    public function index()
+    {
+        $data = [
+            'title'        => 'Sistem Informasi Alat Penerangan Lampu Jalan Umum Kabupaten Tegal',
+            'aktif_beranda'=> 'active',
+            'dt_pengaduan' => $this->model->getPengaduanBeranda(),
+        ];
+
+        return view('home/pages/v_header', $data)
+             . view('home/pages/v_beranda')
+             . view('home/pages/v_footer');
+    }
 }

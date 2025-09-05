@@ -1,230 +1,411 @@
-<?php 
-defined('BASEPATH') OR exit('No direct script access allowed');
+<?php
 
-class Model_app extends CI_Model{
-    function __construct(){
+namespace App\Models;
+
+use CodeIgniter\Model;
+
+class Model_app extends Model
+{
+    protected $db;
+
+    public function __construct()
+    {
         parent::__construct();
+        $this->db = \Config\Database::connect();
     }
 
-	public function getKodePengaduan(){
-		$tgl = date("Ymd");
-		$q = $this->db->query("SELECT MAX(RIGHT(id_pengaduan,3)) AS kd_max FROM tbl_pengaduan WHERE DATE(tgl_input)=CURDATE()");
-        $kd = "";
-        if($q->num_rows()>0){
-            foreach($q->result() as $k){
-                $tmp = ((int)$k->kd_max)+1;
+    // ================== KODE ==================
+    public function getKodePengaduan()
+    {
+        $tgl = date("Ymd");
+        $query = $this->db->query("
+            SELECT MAX(RIGHT(id_pengaduan,3)) AS kd_max 
+            FROM tbl_pengaduan 
+            WHERE DATE(tgl_input) = CURDATE()
+        ");
+
+        $kd = "03";
+        if ($query->getNumRows() > 0) {
+            $row = $query->getRow();
+            if ($row->kd_max) {
+                $tmp = ((int)$row->kd_max) + 1;
                 $kd = sprintf("%03s", $tmp);
             }
-        }else{
-            $kd = "03";
         }
-        return $tgl."".$kd;
-	}
-	
-	public function getKodePengaduanTanggal($tgl){
-		$tanggal = date("Ymd");
-		$q = $this->db->query("SELECT MAX(RIGHT(id_pengaduan,3)) AS kd_max FROM tbl_pengaduan WHERE DATE(tgl_input)='$tgl'");
-        $kd = "";
-        if($q->num_rows()>0){
-            foreach($q->result() as $k){
-                $tmp = ((int)$k->kd_max)+1;
+        return $tgl . $kd;
+    }
+
+    public function getKodePengaduanTanggal($tgl)
+    {
+        $tanggal = date("Ymd");
+        $query = $this->db->query("
+            SELECT MAX(RIGHT(id_pengaduan,3)) AS kd_max 
+            FROM tbl_pengaduan 
+            WHERE DATE(tgl_input) = ?", [$tgl]
+        );
+
+        $kd = "03";
+        if ($query->getNumRows() > 0) {
+            $row = $query->getRow();
+            if ($row->kd_max) {
+                $tmp = ((int)$row->kd_max) + 1;
                 $kd = sprintf("%03s", $tmp);
             }
-        }else{
-            $kd = "03";
         }
-        return $tanggal."".$kd;
-	}
-	
-	public function getKodeAspirasi(){
-		$tgl = date("Ymd");
-		$q = $this->db->query("SELECT MAX(RIGHT(id_aspirasi,3)) AS kd_max FROM tbl_aspirasi WHERE DATE(tgl_aspirasi)=CURDATE()");
-        $kd = "";
-        if($q->num_rows()>0){
-            foreach($q->result() as $k){
-                $tmp = ((int)$k->kd_max)+1;
+        return $tanggal . $kd;
+    }
+
+    public function getKodeAspirasi()
+    {
+        $tgl = date("Ymd");
+        $query = $this->db->query("
+            SELECT MAX(RIGHT(id_aspirasi,3)) AS kd_max 
+            FROM tbl_aspirasi 
+            WHERE DATE(tgl_aspirasi) = CURDATE()
+        ");
+
+        $kd = "03";
+        if ($query->getNumRows() > 0) {
+            $row = $query->getRow();
+            if ($row->kd_max) {
+                $tmp = ((int)$row->kd_max) + 1;
                 $kd = sprintf("%03s", $tmp);
             }
-        }else{
-            $kd = "03";
         }
-        return "ASP".$tgl."".$kd;
-	}
-	
-	// ADMIN	
-	function getAllAdmin(){
-		return $this->db->query("SELECT * FROM tbl_user a inner join tbl_akses b
-		ON a.id_akses=b.id_akses where a.aktif='1' order by a.id_akses")->result();
-	}
-	
-	function getAllKecamatan(){
-		return $this->db->query("SELECT * FROM tbl_kecamatan a inner join tbl_rayon b
-		ON a.id_rayon=b.id_rayon order by b.id_rayon desc, nama_kecamatan asc")->result();
-	}
-	
-	function getAllKabupaten(){
-		return $this->db->query("SELECT * FROM tbl_kabupaten a inner join tbl_provinsi b
-		ON a.id_provinsi=b.id_provinsi order by id_kabupaten desc")->result();
-	}
-	
-	function getJmlJalan(){
-		return $this->db->query("SELECT * from tbl_jalan a inner join tbl_kecamatan b
-		ON a.id_kecamatan=b.id_kecamatan")->num_rows();
-	}
-	
-	function getAllJalan($sampai,$dari){
-		return $this->db->query("SELECT * from tbl_jalan a inner join tbl_kecamatan b
-		ON a.id_kecamatan=b.id_kecamatan order by id_jalan desc LIMIT $dari, $sampai")->result();
-	}
-	
-	// PJU
-	
-	function getJmlPju(){
-		return $this->db->query("SELECT * from tbl_pju a inner join tbl_jalan b
-		ON a.id_jalan=b.id_jalan inner join tbl_kecamatan c
-		ON b.id_kecamatan=c.id_kecamatan inner join tbl_rayon d
-		ON c.id_rayon=d.id_rayon")->num_rows();
-	}
-	
-	function getAllPju($sampai,$dari){
-		return $this->db->query("SELECT * from tbl_pju a inner join tbl_jalan b
-		ON a.id_jalan=b.id_jalan inner join tbl_kecamatan c
-		ON b.id_kecamatan=c.id_kecamatan inner join tbl_rayon d
-		ON c.id_rayon=d.id_rayon order by id_pju desc LIMIT $dari, $sampai")->result();
-	}
-	
-	function getCariPju($id){
-		return $this->db->query("SELECT * from tbl_pju a inner join tbl_jalan b
-		ON a.id_jalan=b.id_jalan inner join tbl_kecamatan c
-		ON b.id_kecamatan=c.id_kecamatan where a.id_pju like '%$id%' OR b.nama_jalan like '%$id%'")->result();
-	}
-	
-	function getDataPju($id){
-		return $this->db->query("SELECT * from tbl_pju a inner join tbl_jalan b
-		ON a.id_jalan=b.id_jalan inner join tbl_kecamatan c
-		ON b.id_kecamatan=c.id_kecamatan where id_pju='$id'")->result();
-	}
-	
-	function getLihatPju($id){
-		return $this->db->query("SELECT * from tbl_pju a inner join tbl_jalan b
-		ON a.id_jalan=b.id_jalan inner join tbl_kecamatan c
-		ON b.id_kecamatan=c.id_kecamatan inner join tbl_rayon d
-		ON c.id_rayon=d.id_rayon where a.id_pju='$id'")->result();
-	}
-	
-	function getPetaPju(){
-		return $this->db->query("SELECT * from tbl_pju a inner join tbl_jalan b
-		ON a.id_jalan=b.id_jalan inner join tbl_kecamatan c
-		ON b.id_kecamatan=c.id_kecamatan where lat!=''")->result();
-	}
-	
-	function getFilterPeta($kec,$jln,$jns,$kds){
-		return $this->db->query("SELECT * from tbl_pju a inner join tbl_jalan b
-		ON a.id_jalan=b.id_jalan inner join tbl_kecamatan c
-		ON b.id_kecamatan=c.id_kecamatan where lat!='' AND c.id_kecamatan like '$kec' AND b.id_jalan like '$jln' AND a.jenis like '$jns' AND a.kondisi like '$kds'")->result();
-	}
-	
-	function getAllJenisLampu(){
-		return $this->db->query("SELECT jenis from tbl_pju group by jenis")->result();
-	}
-	
-	function getAllKondisiLampu(){
-		return $this->db->query("SELECT kondisi from tbl_pju group by kondisi")->result();
-	}
-	
-	function getFilterPetaPublik($kec,$jln){
-		return $this->db->query("SELECT * from tbl_pju a inner join tbl_jalan b
-		ON a.id_jalan=b.id_jalan inner join tbl_kecamatan c
-		ON b.id_kecamatan=c.id_kecamatan where lat!='' AND c.id_kecamatan like '$kec' AND b.id_jalan like '$jln'")->result();
-	}
-	
-	function getGroupFilterPeta($kec,$jln){
-		return $this->db->query("SELECT * from tbl_pju a inner join tbl_jalan b
-		ON a.id_jalan=b.id_jalan inner join tbl_kecamatan c
-		ON b.id_kecamatan=c.id_kecamatan where lat!='' AND c.id_kecamatan like '$kec' AND b.id_jalan like '$jln' group by c.id_kecamatan")->result();
-	}
-	
-	// JALAN
-	
-	function getDataJalan(){
-		return $this->db->query("SELECT * from tbl_jalan a inner join tbl_kecamatan b
-		ON a.id_kecamatan=b.id_kecamatan order by id_jalan")->result();
-	}
-	
-	function getJalan($id){
-		return $this->db->query("SELECT *,(SELECT COUNT(*) from tbl_pju where id_jalan='$id') as pju_terpasang from tbl_jalan a inner join tbl_kecamatan b
-		ON a.id_kecamatan=b.id_kecamatan inner join tbl_rayon c
-		ON b.id_rayon=c.id_rayon where a.id_jalan='$id'")->result();
-	}
-	
-	function getLihatJalan($id){
-		return $this->db->query("SELECT * from tbl_pju a inner join tbl_jalan b
-		ON a.id_jalan=b.id_jalan inner join tbl_kecamatan c
-		ON b.id_kecamatan=c.id_kecamatan inner join tbl_rayon d
-		ON c.id_rayon=d.id_rayon where b.id_jalan='$id'")->result();
-	}
-	
-	// PENGADUAN
-	
-	function getJmlPengaduan(){
-		return $this->db->query("SELECT * from tbl_pengaduan where aktif='1'")->num_rows();
-	}
-	
-	function getAllPengaduan($sampai,$dari){
-		return $this->db->query("SELECT * from tbl_pengaduan where aktif='1' order by id_pengaduan desc LIMIT $dari, $sampai")->result();
-	}
-	
-	function getLihatPengaduan($id){
-		return $this->db->query("SELECT * from tbl_pengaduan a left join tbl_jalan b
-		ON a.id_jalan=b.id_jalan left join tbl_kecamatan c
-		ON b.id_kecamatan=c.id_kecamatan where id_pengaduan='$id' AND a.aktif='1'")->result();
-	}
-	
-	function getPengaduanBeranda(){
-		return $this->db->query("SELECT * from tbl_pengaduan where aktif='1' order by id_pengaduan desc LIMIT 0, 4")->result();
-	}
-	
-	// ASPIRASI
-	
-	function getJmlAspirasi(){
-		return $this->db->query("SELECT * from tbl_aspirasi where aktif='1'")->num_rows();
-	}
-	
-	function getAllAspirasi($sampai,$dari){
-		return $this->db->query("SELECT * from tbl_aspirasi where aktif='1' order by id_aspirasi desc LIMIT $dari, $sampai")->result();
-	}
-	
-	function getLihatAspirasi($id){
-		return $this->db->query("SELECT * from tbl_aspirasi where id_aspirasi='$id' AND a.aktif='1'")->result();
-	}
-	
-	function getAspirasiBeranda(){
-		return $this->db->query("SELECT * from tbl_aspirasi where aktif='1' order by id_pengaduan desc LIMIT 0, 4")->result();
-	}
-	
-	// CRUD DATA
-	public function getAllData($table)
-    {
-        return $this->db->get($table)->result();
+        return "ASP" . $tgl . $kd;
     }
-	 public function getSelectedData($table,$data)
+
+    // ================== ADMIN ==================
+    public function getAllAdmin()
     {
-        return $this->db->get_where($table, $data);
+        return $this->db->query("
+            SELECT * 
+            FROM tbl_user a 
+            INNER JOIN tbl_akses b ON a.id_akses = b.id_akses 
+            WHERE a.aktif = '1' 
+            ORDER BY a.id_akses
+        ")->getResult();
     }
-    function updateData($table,$data,$field_key)
+
+    public function getAllKecamatan()
     {
-        $this->db->update($table,$data,$field_key);
+        return $this->db->query("
+            SELECT * 
+            FROM tbl_kecamatan a 
+            INNER JOIN tbl_rayon b ON a.id_rayon = b.id_rayon 
+            ORDER BY b.id_rayon DESC, nama_kecamatan ASC
+        ")->getResult();
     }
-    function deleteData($table,$data)
+
+    public function getAllKabupaten()
     {
-        $this->db->delete($table,$data);
+        return $this->db->query("
+            SELECT * 
+            FROM tbl_kabupaten a 
+            INNER JOIN tbl_provinsi b ON a.id_provinsi = b.id_provinsi 
+            ORDER BY id_kabupaten DESC
+        ")->getResult();
     }
-    function insertData($table,$data)
+
+    public function getJmlJalan()
     {
-        $this->db->insert($table,$data);
+        return $this->db->query("
+            SELECT * 
+            FROM tbl_jalan a 
+            INNER JOIN tbl_kecamatan b ON a.id_kecamatan = b.id_kecamatan
+        ")->getNumRows();
     }
-    function manualQuery($q)
+
+    public function getAllJalan($limit, $offset)
     {
-        return $this->db->query($q);
+        return $this->db->query("
+            SELECT * 
+            FROM tbl_jalan a 
+            INNER JOIN tbl_kecamatan b ON a.id_kecamatan = b.id_kecamatan 
+            ORDER BY id_jalan DESC 
+            LIMIT ?, ?
+        ", [$offset, $limit])->getResult();
+    }
+
+    // ================== PJU ==================
+    public function getJmlPju()
+    {
+        return $this->db->query("
+            SELECT * 
+            FROM tbl_pju a 
+            INNER JOIN tbl_jalan b ON a.id_jalan = b.id_jalan 
+            INNER JOIN tbl_kecamatan c ON b.id_kecamatan = c.id_kecamatan 
+            INNER JOIN tbl_rayon d ON c.id_rayon = d.id_rayon
+        ")->getNumRows();
+    }
+
+    public function getAllPju($limit, $offset)
+    {
+        return $this->db->query("
+            SELECT * 
+            FROM tbl_pju a 
+            INNER JOIN tbl_jalan b ON a.id_jalan = b.id_jalan 
+            INNER JOIN tbl_kecamatan c ON b.id_kecamatan = c.id_kecamatan 
+            INNER JOIN tbl_rayon d ON c.id_rayon = d.id_rayon 
+            ORDER BY id_pju DESC 
+            LIMIT ?, ?
+        ", [$offset, $limit])->getResult();
+    }
+
+    public function getCariPju($id)
+    {
+        return $this->db->query("
+            SELECT * 
+            FROM tbl_pju a 
+            INNER JOIN tbl_jalan b ON a.id_jalan = b.id_jalan 
+            INNER JOIN tbl_kecamatan c ON b.id_kecamatan = c.id_kecamatan 
+            WHERE a.id_pju LIKE ? OR b.nama_jalan LIKE ?
+        ", ["%$id%", "%$id%"])->getResult();
+    }
+
+    public function getDataPju($id)
+    {
+        return $this->db->query("
+            SELECT * 
+            FROM tbl_pju a 
+            INNER JOIN tbl_jalan b ON a.id_jalan = b.id_jalan 
+            INNER JOIN tbl_kecamatan c ON b.id_kecamatan = c.id_kecamatan 
+            WHERE id_pju = ?
+        ", [$id])->getResult();
+    }
+
+    public function getLihatPju($id)
+    {
+        return $this->db->query("
+            SELECT * 
+            FROM tbl_pju a 
+            INNER JOIN tbl_jalan b ON a.id_jalan = b.id_jalan 
+            INNER JOIN tbl_kecamatan c ON b.id_kecamatan = c.id_kecamatan 
+            INNER JOIN tbl_rayon d ON c.id_rayon = d.id_rayon 
+            WHERE a.id_pju = ?
+        ", [$id])->getResult();
+    }
+
+    public function getPetaPju()
+    {
+        return $this->db->query("
+            SELECT * 
+            FROM tbl_pju a 
+            INNER JOIN tbl_jalan b ON a.id_jalan = b.id_jalan 
+            INNER JOIN tbl_kecamatan c ON b.id_kecamatan = c.id_kecamatan 
+            WHERE lat != ''
+        ")->getResult();
+    }
+
+    public function getFilterPeta($kec, $jln, $jns, $kds)
+    {
+        return $this->db->query("
+            SELECT * 
+            FROM tbl_pju a 
+            INNER JOIN tbl_jalan b ON a.id_jalan = b.id_jalan 
+            INNER JOIN tbl_kecamatan c ON b.id_kecamatan = c.id_kecamatan 
+            WHERE lat != '' 
+            AND c.id_kecamatan LIKE ? 
+            AND b.id_jalan LIKE ? 
+            AND a.jenis LIKE ? 
+            AND a.kondisi LIKE ?
+        ", [$kec, $jln, $jns, $kds])->getResult();
+    }
+
+    public function getAllJenisLampu()
+    {
+        return $this->db->query("
+            SELECT jenis 
+            FROM tbl_pju 
+            GROUP BY jenis
+        ")->getResult();
+    }
+
+    public function getAllKondisiLampu()
+    {
+        return $this->db->query("
+            SELECT kondisi 
+            FROM tbl_pju 
+            GROUP BY kondisi
+        ")->getResult();
+    }
+
+    public function getFilterPetaPublik($kec, $jln)
+    {
+        return $this->db->query("
+            SELECT * 
+            FROM tbl_pju a 
+            INNER JOIN tbl_jalan b ON a.id_jalan = b.id_jalan 
+            INNER JOIN tbl_kecamatan c ON b.id_kecamatan = c.id_kecamatan 
+            WHERE lat != '' 
+            AND c.id_kecamatan LIKE ? 
+            AND b.id_jalan LIKE ?
+        ", [$kec, $jln])->getResult();
+    }
+
+    public function getGroupFilterPeta($kec, $jln)
+    {
+        return $this->db->query("
+            SELECT * 
+            FROM tbl_pju a 
+            INNER JOIN tbl_jalan b ON a.id_jalan = b.id_jalan 
+            INNER JOIN tbl_kecamatan c ON b.id_kecamatan = c.id_kecamatan 
+            WHERE lat != '' 
+            AND c.id_kecamatan LIKE ? 
+            AND b.id_jalan LIKE ? 
+            GROUP BY c.id_kecamatan
+        ", [$kec, $jln])->getResult();
+    }
+
+    // ================== JALAN ==================
+    public function getDataJalan()
+    {
+        return $this->db->query("
+            SELECT * 
+            FROM tbl_jalan a 
+            INNER JOIN tbl_kecamatan b ON a.id_kecamatan = b.id_kecamatan 
+            ORDER BY id_jalan
+        ")->getResult();
+    }
+
+    public function getJalan($id)
+    {
+        return $this->db->query("
+            SELECT *, 
+                (SELECT COUNT(*) FROM tbl_pju WHERE id_jalan = ?) AS pju_terpasang 
+            FROM tbl_jalan a 
+            INNER JOIN tbl_kecamatan b ON a.id_kecamatan = b.id_kecamatan 
+            INNER JOIN tbl_rayon c ON b.id_rayon = c.id_rayon 
+            WHERE a.id_jalan = ?
+        ", [$id, $id])->getResult();
+    }
+
+    public function getLihatJalan($id)
+    {
+        return $this->db->query("
+            SELECT * 
+            FROM tbl_pju a 
+            INNER JOIN tbl_jalan b ON a.id_jalan = b.id_jalan 
+            INNER JOIN tbl_kecamatan c ON b.id_kecamatan = c.id_kecamatan 
+            INNER JOIN tbl_rayon d ON c.id_rayon = d.id_rayon 
+            WHERE b.id_jalan = ?
+        ", [$id])->getResult();
+    }
+
+    // ================== PENGADUAN ==================
+    public function getJmlPengaduan()
+    {
+        return $this->db->query("
+            SELECT * 
+            FROM tbl_pengaduan 
+            WHERE aktif = '1'
+        ")->getNumRows();
+    }
+
+    public function getAllPengaduan($limit, $offset)
+    {
+        return $this->db->query("
+            SELECT * 
+            FROM tbl_pengaduan 
+            WHERE aktif = '1' 
+            ORDER BY id_pengaduan DESC 
+            LIMIT ?, ?
+        ", [$offset, $limit])->getResult();
+    }
+
+    public function getLihatPengaduan($id)
+    {
+        return $this->db->query("
+            SELECT * 
+            FROM tbl_pengaduan a 
+            LEFT JOIN tbl_jalan b ON a.id_jalan = b.id_jalan 
+            LEFT JOIN tbl_kecamatan c ON b.id_kecamatan = c.id_kecamatan 
+            WHERE id_pengaduan = ? 
+            AND a.aktif = '1'
+        ", [$id])->getResult();
+    }
+
+    public function getPengaduanBeranda()
+    {
+        return $this->db->query("
+            SELECT * 
+            FROM tbl_pengaduan 
+            WHERE aktif = '1' 
+            ORDER BY id_pengaduan DESC 
+            LIMIT 0, 4
+        ")->getResult();
+    }
+
+    // ================== ASPIRASI ==================
+    public function getJmlAspirasi()
+    {
+        return $this->db->query("
+            SELECT * 
+            FROM tbl_aspirasi 
+            WHERE aktif = '1'
+        ")->getNumRows();
+    }
+
+    public function getAllAspirasi($limit, $offset)
+    {
+        return $this->db->query("
+            SELECT * 
+            FROM tbl_aspirasi 
+            WHERE aktif = '1' 
+            ORDER BY id_aspirasi DESC 
+            LIMIT ?, ?
+        ", [$offset, $limit])->getResult();
+    }
+
+    public function getLihatAspirasi($id)
+    {
+        return $this->db->query("
+            SELECT * 
+            FROM tbl_aspirasi a
+            WHERE id_aspirasi = ? 
+            AND a.aktif = '1'
+        ", [$id])->getResult();
+    }
+
+    public function getAspirasiBeranda()
+    {
+        return $this->db->query("
+            SELECT * 
+            FROM tbl_aspirasi 
+            WHERE aktif = '1' 
+            ORDER BY id_aspirasi DESC 
+            LIMIT 0, 4
+        ")->getResult();
+    }
+
+    // ================== CRUD GENERIC ==================
+    public function getAllData($table)
+    {
+        return $this->db->table($table)->get()->getResult();
+    }
+
+    public function getSelectedData($table, $where)
+    {
+        return $this->db->table($table)->getWhere($where)->getResult();
+    }
+
+    public function updateData($table, $data, $where)
+    {
+        return $this->db->table($table)->update($data, $where);
+    }
+
+    public function deleteData($table, $where)
+    {
+        return $this->db->table($table)->delete($where);
+    }
+
+    public function insertData($table, $data)
+    {
+        return $this->db->table($table)->insert($data);
+    }
+
+    public function manualQuery($sql, $params = [])
+    {
+        return $this->db->query($sql, $params);
     }
 }

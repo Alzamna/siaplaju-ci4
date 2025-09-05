@@ -1,27 +1,41 @@
 <?php 
-defined('BASEPATH') OR exit('No direct script access allowed');
+namespace App\Controllers;
 
-class Pengaduan extends CI_Controller {
-	function __construct(){
-		parent::__construct();
-		$this->load->model('model_app','model');
-		$this->load->library('googlemaps');
-		$this->load->library('pagination');
-		$this->load->library('upload');
-		$this->load->library('image_lib');
-		$this->load->helper('text');
-	}
+use App\Models\Model;
+use App\Models\Model_app;
+
+class Pengaduan extends BaseController
+{
+    protected $model;
+    protected $googlemaps;
+    protected $pagination;
+    protected $upload;
+    protected $imageLib;
+	protected $session;
+
+
+    public function __construct()
+    {
+        $this->model = new Model_app();
+        $this->googlemaps = service('googlemaps'); 
+        $this->pagination = \Config\Services::pager(); 
+        $this->session = \Config\Services::session();
+        $this->request = \Config\Services::request();
+    }
+
 	
 	public function index(){
-		if($this->uri->segment(3)==FALSE){
+		if ($this->request->getUri()->getSegment(3) == null) {
 			$dari = 0;
 		} else {
-			$dari = $this->uri->segment(3);
-		};
+			$dari = $this->request->getUri()->getSegment(3);
+		}
+
 		
-		$num = $this->model_app->getJmlPengaduan();
+		$num = $this->model->getJmlPengaduan();
+		$router = service('router');
 		$config=array(
-			'base_url'=>base_url().$this->router->fetch_class().'/'.$this->router->fetch_method(),
+			'base_url' => base_url($router->controllerName() . '/' . $router->methodName()),
 			'total_rows'=>$num,
 			'per_page'=>12,
 			'full_tag_open'=> "<ul class='pagination nomargin'>",
@@ -44,12 +58,12 @@ class Pengaduan extends CI_Controller {
 			'title'=>'Pengaduan Lampu Penerangan Jalan Umum',
 			'pengaduan'=>'active',
 			'aktif_pengaduan'=>'active',
-			'dt_pengaduan'=>$this->model_app->getAllPengaduan($config['per_page'],$dari),
+			'dt_pengaduan'=>$this->model->getAllPengaduan($config['per_page'],$dari),
 		);
 		$this->pagination->initialize($config);
-		$this->load->view('home/pages/v_header',$data);
-		$this->load->view('home/pengaduan/v_pengaduan');
-		$this->load->view('home/pages/v_footer');
+		echo view('home/pages/v_header',$data);
+		echo view('home/pengaduan/v_pengaduan');
+		echo view('home/pages/v_footer');
 	}
 	
 	public function input(){
@@ -58,15 +72,15 @@ class Pengaduan extends CI_Controller {
 			'pengaduan'=>'active',
 			'aktif_pengaduan'=>'active',
 		);
-		$this->load->view('home/pages/v_header',$data);
-		$this->load->view('home/pengaduan/v_pengaduan_input');
-		$this->load->view('home/pages/v_footer');
+		echo view('home/pages/v_header',$data);
+		echo view('home/pengaduan/v_pengaduan_input');
+		echo view('home/pages/v_footer');
 	}
 	
 	public function proses_input_pengaduan(){
-		$id = $this->model_app->getKodePengaduan();
-		$nama = $this->input->post('nama');
-		$phone = $this->input->post('telp');
+		$id = $this->model->getKodePengaduan();
+		$nama = $this->request->getPost('nama');
+		$phone = $this->request->getPost('telp');
 		$pertama = mb_substr($phone, 0, 1);
 		if($pertama=="0"){
 			$telp = substr_replace($phone,'62',0,1);
@@ -87,7 +101,7 @@ class Pengaduan extends CI_Controller {
 				'id_pengaduan'=>$id,
 				'pelapor'=>$nama,
 				'no_telp'=>$telp,
-				'laporan'=>$this->input->post('isi'),
+				'laporan'=>$this->request->getPost('isi'),
 				'tgl_pengaduan'=>date('Y-m-d H:i:s'),
 				'status'=>1,
 			);
@@ -97,8 +111,8 @@ class Pengaduan extends CI_Controller {
 				'keterangan'=>'Pengaduan Diterima',
 				'tgl_status'=>date('Y-m-d H:i:s'),
 			);
-			$this->model_app->insertData('tbl_pengaduan_status',$status);
-			$this->model_app->insertData('tbl_pengaduan',$data);
+			$this->model->insertData('tbl_pengaduan_status',$status);
+			$this->model->insertData('tbl_pengaduan',$data);
 			//$this->kirimpengaduan($id,$nama,$telp);
 		} else {
 			$config=array(
@@ -114,16 +128,16 @@ class Pengaduan extends CI_Controller {
 					'aktif_pengaduan'=>'active',
 					'error'=> $this->upload->display_errors(),
 				);
-				$this->load->view('home/pages/v_header',$data);
-				$this->load->view('home/pengaduan/v_pengaduan_input');
-				$this->load->view('home/pages/v_footer');
+				echo view('home/pages/v_header',$data);
+				echo view('home/pengaduan/v_pengaduan_input');
+				echo view('home/pages/v_footer');
 			} else {
 				$upload = $this->upload->data();
 				$data=array(
 					'id_pengaduan'=>$id,
-					'pelapor'=>$this->input->post('nama'),
-					'no_telp'=>$this->input->post('telp'),
-					'laporan'=>$this->input->post('isi'),
+					'pelapor'=>$this->request->getPost('nama'),
+					'no_telp'=>$this->request->getPost('telp'),
+					'laporan'=>$this->request->getPost('isi'),
 					'tgl_pengaduan'=>date('Y-m-d H:i:s'),
 					'status'=>1,
 					'foto'=>$upload['file_name'],
@@ -134,31 +148,23 @@ class Pengaduan extends CI_Controller {
 					'keterangan'=>'Pengaduan Diterima',
 					'tgl_status'=>date('Y-m-d H:i:s'),
 				);
-				$this->model_app->insertData('tbl_pengaduan_status',$status);
-				$this->model_app->insertData('tbl_pengaduan',$data);
+				$this->model->insertData('tbl_pengaduan_status',$status);
+				$this->model->insertData('tbl_pengaduan',$data);
 				//$this->kirimpengaduan($id,$nama,$telp);
-				$image=array(
-					'image_library'=>'gd2',
-					'source_image'=>'./upload/temp/'.$upload['file_name'],
-					'new_image'=>'./upload/foto/pengaduan/'.$upload['file_name'],
-					'create_thumb'=>TRUE,
-					'thumb_marker'=>'',
-					'maintain_ratio' => TRUE,
-					'width' => 1200,
-					'height' => 800,
-				);
-				$this->image_lib->initialize($image);
-				$this->image_lib->resize();
-				$this->image_lib->clear();
+				$imageService = \Config\Services::image()
+				->withFile('./upload/temp/' . $upload['file_name'])
+				->resize(1200, 800, true, 'height') 
+				->save('./upload/foto/pengaduan/' . $upload['file_name']);
+
 			}
 		}
-		$this->session->set_flashdata('sukses', '<script>alert("Terima kasih laporan anda berhasil terkirim, Admin kami akan memverifikasi dan menampilkan laporan anda dalam 1x24 jam. Mohon untuk tidak menginputkan pengaduan yang sama.");</script>');
+		session()->setFlashdata('sukses', '<script>alert("Terima kasih laporan anda berhasil terkirim, Admin kami akan memverifikasi dan menampilkan laporan anda dalam 1x24 jam. Mohon untuk tidak menginputkan pengaduan yang sama.");</script>');
 		redirect('pengaduan');
 	}
 	
 	public function lihat(){
-		$id = $this->uri->segment(3);
-		$idx['id_pengaduan'] = $this->uri->segment(3);
+		$id = $this->request->getUri()->getSegment(3);
+		$idx['id_pengaduan'] = $this->request->getUri()->getSegment(3);
 		$pgn = $this->model->getLihatPengaduan($id);
 		
 		foreach($pgn as $row){
@@ -189,20 +195,24 @@ class Pengaduan extends CI_Controller {
 			'aktif_pengaduan'=>'active',
 			'peta'=>$this->googlemaps->create_map(),
 			'dt_pengaduan'=>$pgn,
-			'dt_status'=>$this->model->getSelectedData('tbl_pengaduan_status',$idx)->result(),
-			'dt_tindakan'=>$this->model->getSelectedData('tbl_tindakan',$idx)->result(),
-			'dt_foto'=>$this->model->getSelectedData('tbl_tindakan_foto',$idx)->result(),
+			'dt_status'   => $this->model->getSelectedData('tbl_pengaduan_status', $idx),
+			'dt_tindakan' => $this->model->getSelectedData('tbl_tindakan', $idx),
+			'dt_foto'     => $this->model->getSelectedData('tbl_tindakan_foto', $idx),
+
 		);
-		$this->load->view('home/pages/v_header',$data);
-		$this->load->view('home/pengaduan/v_pengaduan_lihat');
-		$this->load->view('home/pages/v_footer');
+		echo view('home/pages/v_header',$data);
+		echo view('home/pengaduan/v_pengaduan_lihat');
+		echo view('home/pages/v_footer');
 	}
 	
-	public function get_jalan(){
-		$id['id_kecamatan'] = $this->input->get('id', TRUE);
-		$jalan = $this->model->getSelectedData('tbl_jalan',$id)->result();
-		echo json_encode($jalan);
+	public function get_jalan()
+	{
+		$id = ['id_kecamatan' => $this->request->getGet('id')];
+		$jalan = $this->model->getSelectedData('tbl_jalan', $id); // sudah array of object
+		return $this->response->setJSON($jalan);
 	}
+
+
 	
 	private function kirimpengaduan($id,$nama,$telp){
 		$curl = curl_init();
