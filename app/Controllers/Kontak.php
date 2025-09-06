@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Models\Model_app;
 use App\Models\ModelApp;
+use App\Libraries\Googlemaps;
 
 class Kontak extends BaseController
 {
@@ -16,7 +17,7 @@ class Kontak extends BaseController
         helper(['date']);
 
         // kalau googlemaps sudah dijadikan service di CI4
-        $this->googlemaps = service('googlemaps');
+        $this->googlemaps = new Googlemaps();
     }
 
     public function index()

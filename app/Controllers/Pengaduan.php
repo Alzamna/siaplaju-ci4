@@ -24,47 +24,38 @@ class Pengaduan extends BaseController
     }
 
 	
-	public function index(){
-		if ($this->request->getUri()->getSegment(3) == null) {
-			$dari = 0;
-		} else {
-			$dari = $this->request->getUri()->getSegment(3);
-		}
+	public function index()
+    {
+        helper('text'); // buat word_limiter di view
 
-		
-		$num = $this->model->getJmlPengaduan();
-		$router = service('router');
-		$config=array(
-			'base_url' => base_url($router->controllerName() . '/' . $router->methodName()),
-			'total_rows'=>$num,
-			'per_page'=>12,
-			'full_tag_open'=> "<ul class='pagination nomargin'>",
-			'full_tag_close'=> "</ul>",
-			'num_tag_open' => '<li>',
-			'num_tag_close' => '</li>',
-			'cur_tag_open' => "<li class='disabled'><li class='active'><a href='#'>",
-			'cur_tag_close' => "<span class='sr-only'></span></a></li>",
-			'next_tag_open' => "<li>",
-			'next_tagl_close' => "</li>",
-			'prev_tag_open' => "<li>",
-			'prev_tagl_close' => "</li>",
-			'first_tag_open' => "<li>",
-			'first_tagl_close' => "</li>",
-			'last_tag_open' => "<li>",
-			'last_tagl_close' => "</li>"
-		);
-		
-		$data=array(
-			'title'=>'Pengaduan Lampu Penerangan Jalan Umum',
-			'pengaduan'=>'active',
-			'aktif_pengaduan'=>'active',
-			'dt_pengaduan'=>$this->model->getAllPengaduan($config['per_page'],$dari),
-		);
-		$this->pagination->initialize($config);
-		echo view('home/pages/v_header',$data);
-		echo view('home/pengaduan/v_pengaduan');
-		echo view('home/pages/v_footer');
-	}
+        // ambil segment ke-3 untuk pagination offset
+        $dari = $this->request->getUri()->getTotalSegments() >= 3 
+            ? (int) $this->request->getUri()->getSegment(3) 
+            : 0;
+
+        $perPage = 12; 
+        $num     = $this->model->getJmlPengaduan();
+
+        // data dari model
+        $pengaduan = $this->model->getAllPengaduan($perPage, $dari);
+
+        // pagination bawaan CI4
+        $pager = \Config\Services::pager();
+        $links = $pager->makeLinks($dari, $perPage, $num, 'default_full');
+
+        $data = [
+            'title'           => 'Pengaduan Lampu Penerangan Jalan Umum',
+            'pengaduan'       => 'active',
+            'aktif_pengaduan' => 'active',
+            'dt_pengaduan'    => $pengaduan,
+            'pager'           => $links,
+        ];
+
+        return view('home/pages/v_header', $data)
+             . view('home/pengaduan/v_pengaduan', $data)
+             . view('home/pages/v_footer');
+    }
+
 	
 	public function input(){
 		$data=array(
@@ -72,9 +63,9 @@ class Pengaduan extends BaseController
 			'pengaduan'=>'active',
 			'aktif_pengaduan'=>'active',
 		);
-		echo view('home/pages/v_header',$data);
-		echo view('home/pengaduan/v_pengaduan_input');
-		echo view('home/pages/v_footer');
+		return view('home/pages/v_header',$data);
+		return view('home/pengaduan/v_pengaduan_input');
+		return view('home/pages/v_footer');
 	}
 	
 	public function proses_input_pengaduan(){
@@ -92,7 +83,7 @@ class Pengaduan extends BaseController
 		$link = "siaplaju.com/pengaduan/lihat/".$id;
 		$this->google_url_api->enable_debug(TRUE);
 		$short_url = $this->google_url_api->shorten($link);
-		echo $short_url->id;
+		return $short_url->id;
 		*/
 		
 		$foto = 'foto';
@@ -128,9 +119,9 @@ class Pengaduan extends BaseController
 					'aktif_pengaduan'=>'active',
 					'error'=> $this->upload->display_errors(),
 				);
-				echo view('home/pages/v_header',$data);
-				echo view('home/pengaduan/v_pengaduan_input');
-				echo view('home/pages/v_footer');
+				return view('home/pages/v_header',$data);
+				return view('home/pengaduan/v_pengaduan_input');
+				return view('home/pages/v_footer');
 			} else {
 				$upload = $this->upload->data();
 				$data=array(
@@ -200,9 +191,9 @@ class Pengaduan extends BaseController
 			'dt_foto'     => $this->model->getSelectedData('tbl_tindakan_foto', $idx),
 
 		);
-		echo view('home/pages/v_header',$data);
-		echo view('home/pengaduan/v_pengaduan_lihat');
-		echo view('home/pages/v_footer');
+		return view('home/pages/v_header',$data);
+		return view('home/pengaduan/v_pengaduan_lihat');
+		return view('home/pages/v_footer');
 	}
 	
 	public function get_jalan()

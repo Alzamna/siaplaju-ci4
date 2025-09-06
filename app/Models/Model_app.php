@@ -337,6 +337,7 @@ class Model_app extends Model
     }
 
     // ================== ASPIRASI ==================
+
     public function getJmlAspirasi()
     {
         return $this->db->query("

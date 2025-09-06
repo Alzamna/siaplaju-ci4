@@ -19,22 +19,28 @@ class Aspirasi extends BaseController
 
     public function index()
     {
-        $page = $this->request->getGet('page') ?? 1;
+        $page    = (int) ($this->request->getGet('page') ?? 1);
         $perPage = 12;
 
         $total = $this->model->getJmlAspirasi();
 
+        $aspirasi = $this->model->getAllAspirasi($perPage, ($page - 1) * $perPage);
+
+        $pager = \Config\Services::pager();
+        $pagerLinks = $pager->makeLinks($page, $perPage, $total, 'default_full');
+
         $data = [
             'title'         => 'Aspirasi Masyarakat Perencanaan Pemasangan Lampu PJU',
             'aktif_aspirasi'=> 'active',
-            'dt_aspirasi'   => $this->model->getAllAspirasi($perPage, ($page - 1) * $perPage),
-            'pager'         => \Config\Services::pager()->makeLinks($page, $perPage, $total),
+            'dt_aspirasi'   => $aspirasi,
+            'pager'         => $pagerLinks,
         ];
 
         return view('home/pages/v_header', $data)
-             . view('home/aspirasi/v_aspirasi')
-             . view('home/pages/v_footer');
+            . view('home/aspirasi/v_aspirasi', $data)
+            . view('home/pages/v_footer');
     }
+
 
     public function input()
     {

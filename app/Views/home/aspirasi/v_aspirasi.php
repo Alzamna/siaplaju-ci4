@@ -1,4 +1,8 @@
-<?php echo $this->session->flashdata('sukses');?>
+<?php if (session()->getFlashdata('sukses')): ?>
+    <div class="alert alert-success">
+        <?= session()->getFlashdata('sukses') ?>
+    </div>
+<?php endif; ?>
 <section class="nopadding">
 	<div class="container">
 		<header class="text-center margin-bottom-10 margin-top-10">
@@ -30,7 +34,7 @@
 		<!--
 		<form method="post" action="<?php echo site_url('pengaduan/cari') ?>" class="clearfix well well-sm search-big nomargin">
 			<div class="input-group">
-				<input type="hidden" name="<?php echo $this->security->get_csrf_token_name(); ?>" value="<?php echo $this->security->get_csrf_hash(); ?>">
+				<?= csrf_field() ?>
 				<input name="cari" class="form-control input-lg" type="text" placeholder="Masukan nomor pengaduan atau nama anda untuk mencari data pengaduan anda">
 				<div class="input-group-btn">
 					<button type="submit" class="btn btn-default input-lg noborder-left">
@@ -120,9 +124,20 @@
 		</div>
 		
 		<br/>
-		
+		<?php if (! empty($dt_aspirasi)): ?>
+    <?php foreach ($dt_aspirasi as $row): ?>
+        <div class="aspirasi-item">
+            <h5><?= esc($row->nama) ?></h5>
+            <p><?= esc($row->aspirasi) ?></p>
+        </div>
+    <?php endforeach; ?>
+		<?php else: ?>
+			<p>Belum ada aspirasi.</p>
+		<?php endif; ?>
+
+		<!-- Tampilkan pagination -->
 		<div class="text-center">
-			<?php echo $this->pagination->create_links();?>
+			<?= $pager ?>
 		</div>
 		<hr/>
 <!--
