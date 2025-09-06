@@ -1,29 +1,44 @@
-<?php 
-defined('BASEPATH') OR exit('No direct script access allowed');
+<?php
 
-class Adminpju extends CI_Controller {
-	function __construct(){
-		parent::__construct();
-		$this->load->model('model_backend','model');
-		$this->load->library('pagination');
-		$this->load->library('googlemaps');
-		$this->load->helper('text');
-		$this->load->library('upload');
-		if($this->session->userdata('login') != 1 ){
-            redirect('login');
-        };
-	}
+namespace App\Controllers;
+
+use App\Models\Model_backend;
+use CodeIgniter\Controller;
+use Config\Services;
+
+class Adminpju extends BaseController
+{
+    protected $model;
+    protected $pagination;
+    protected $googlemaps;
+    protected $upload;
+
+    public function __construct()
+    {
+        $this->model = new Model_backend();
+
+        helper(['text']); 
+        $this->pagination = Services::pager();
+        $this->googlemaps = new \App\Libraries\Googlemaps();
+        $this->upload = Services::upload();
+
+        $session = session();
+        if ($session->get('login') != 1) {
+            return redirect()->to(base_url('login'));
+        }
+    }
+
 	
 	public function index(){
-		if($this->uri->segment(3)==FALSE){
+		if($this->request->getUri()->getSegment(3)==FALSE){
 			$dari = 0;
 		} else {
-			$dari = $this->uri->segment(3);
+			$dari = $this->request->getUri()->getSegment(3);
 		};
 
 		$num = $this->model->getJmlPju();
 		$config=array(
-			'base_url'=>base_url().$this->router->fetch_class().'/'.$this->router->fetch_method(),
+			'base_url' => base_url() . service('router')->controllerName() . '/' . service('router')->methodName(),
 			'total_rows'=>$num,
 			'per_page'=>20,
 			'full_tag_open'=> "<ul class='pagination'>",
@@ -48,10 +63,17 @@ class Adminpju extends CI_Controller {
 			'dt_pju'=>$this->model->getAllPju($config['per_page'],$dari),
 			'start'=>$dari,
 		);
-		$this->pagination->initialize($config);
-		$this->load->view('pages/v_header',$data);
-		$this->load->view('pju/v_pju');
-		$this->load->view('pages/v_footer');
+		$pager = \Config\Services::pager();
+
+		$data = [
+			'title' => 'Data PJU',
+			'pju'   => $this->model->paginate(20), // ambil data 20 per halaman
+			'pager' => $pager
+		];
+
+		return view('pages/v_header', $data);
+		return view('pju/v_pju');
+		return view('pages/v_footer');
 	}
 	
 	public function tambah(){
@@ -75,9 +97,9 @@ class Adminpju extends CI_Controller {
 			'dt_kecamatan'=>$this->model->getAllKecamatan(),
 			'peta'=>$this->googlemaps->create_map(),
 		);
-		$this->load->view('pages/v_header',$data);
-		$this->load->view('pju/v_tambah_pju');
-		$this->load->view('pages/v_footer');
+		return view('pages/v_header',$data);
+		return view('pju/v_tambah_pju');
+		return view('pages/v_footer');
 	}
 	
 	public function proses_tambah(){
@@ -104,44 +126,37 @@ class Adminpju extends CI_Controller {
 						'id_pju'=>$id,
 						'nama_foto'=>$upload['file_name'],
 					);
-					$this->model_app->insertData('tbl_pju_foto',$foto[$i]);
+					$this->model->insertData('tbl_pju_foto',$foto[$i]);
 					
-					$image=array(
-						'image_library'=>'gd2',
-						'source_image'=>'./upload/temp/'.$upload['file_name'],
-						'new_image'=>'./upload/foto/'.$upload['file_name'],
-						'create_thumb'=>TRUE,
-						'thumb_marker'=>'',
-						'maintain_ratio' => TRUE,
-						'width' => 600,
-					);
-					$this->image_lib->initialize($image);
-					$this->image_lib->resize();
-					$this->image_lib->clear();
+					$image = \Config\Services::image()
+					->withFile('./upload/temp/' . $upload['file_name'])
+					->resize(600, 600, true, 'auto')   // maintain_ratio = TRUE
+					->save('./upload/foto/' . $upload['file_name']);
+
 				}
 			}
 		}
 		
 		$data=array(
-			'id_jalan'=>$this->input->post('jalan'),
-			'id_pel'=>$this->input->post('id_pel'),
-			'no_gardu'=>$this->input->post('no_gardu'),
-			'no_pal'=>$this->input->post('no_pal'),
-			'jenis'=>$this->input->post('jenis'),
-			'kwh'=>$this->input->post('kwh'),
-			'daya'=>$this->input->post('daya'),
-			'posisi'=>$this->input->post('posisi'),
-			'kondisi'=>$this->input->post('kondisi'),
-			'keterangan'=>$this->input->post('keterangan'),
-			'lat'=>$this->input->post('lat'),
-			'lng'=>$this->input->post('lng'),
+			'id_jalan'=>$this->request->getPost('jalan'),
+			'id_pel'=>$this->request->getPost('id_pel'),
+			'no_gardu'=>$this->request->getPost('no_gardu'),
+			'no_pal'=>$this->request->getPost('no_pal'),
+			'jenis'=>$this->request->getPost('jenis'),
+			'kwh'=>$this->request->getPost('kwh'),
+			'daya'=>$this->request->getPost('daya'),
+			'posisi'=>$this->request->getPost('posisi'),
+			'kondisi'=>$this->request->getPost('kondisi'),
+			'keterangan'=>$this->request->getPost('keterangan'),
+			'lat'=>$this->request->getPost('lat'),
+			'lng'=>$this->request->getPost('lng'),
 		);
-		$this->model_app->insertData('tbl_pju',$data);
+		$this->model->insertData('tbl_pju',$data);
 		redirect('adminpju');
 	}
 	
 	public function cari(){
-		$id = $this->input->post('cari');
+		$id = $this->request->getPost('cari');
 		$data=array(
 			'title'=>'Data PJU Kabupaten Tegal',
 			'open_pju'=>'open',
@@ -149,14 +164,14 @@ class Adminpju extends CI_Controller {
 			'dt_pju'=>$this->model->getCariPju($id),
 			'start'=>0,
 		);
-		$this->load->view('pages/v_header',$data);
-		$this->load->view('pju/v_pju');
-		$this->load->view('pages/v_footer');
+		return view('pages/v_header',$data);
+		return view('pju/v_pju');
+		return view('pages/v_footer');
 	}
 	
 	public function edit(){
-		$id = $this->uri->segment(3);
-		$pju = $this->model_app->getDataPju($id);
+		$id = $this->request->getUri()->getSegment(3);
+		$pju = $this->model->getDataPju($id);
 		
 		foreach($pju as $row){
 			$confmap = array(
@@ -192,13 +207,13 @@ class Adminpju extends CI_Controller {
 			'dt_kecamatan'=>$this->model->getAllKecamatan(),
 			'peta'=>$this->googlemaps->create_map(),
 		);
-		$this->load->view('pages/v_header',$data);
-		$this->load->view('pju/v_edit_pju');
-		$this->load->view('pages/v_footer');
+		return view('pages/v_header',$data);
+		return view('pju/v_edit_pju');
+		return view('pages/v_footer');
 	}
 	
 	public function proses_edit(){
-		$id['id_pju'] = $this->uri->segment(3);
+		$id['id_pju'] = $this->request->getUri()->getSegment(3);
 		
 		if(!empty($_FILES['foto']['name'])){
 			$name = date("Ymdhis");
@@ -223,45 +238,38 @@ class Adminpju extends CI_Controller {
 						'id_pju'=>$id,
 						'nama_foto'=>$upload['file_name'],
 					);
-					$this->model_app->insertData('tbl_pju_foto',$foto[$i]);
+					$this->model->insertData('tbl_pju_foto',$foto[$i]);
 					
-					$image=array(
-						'image_library'=>'gd2',
-						'source_image'=>'./upload/temp/'.$upload['file_name'],
-						'new_image'=>'./upload/foto/'.$upload['file_name'],
-						'create_thumb'=>TRUE,
-						'thumb_marker'=>'',
-						'maintain_ratio' => TRUE,
-						'width' => 600,
-					);
-					$this->image_lib->initialize($image);
-					$this->image_lib->resize();
-					$this->image_lib->clear();
+					$image = \Config\Services::image()
+					->withFile('./upload/temp/' . $upload['file_name'])
+					->resize(600, 600, true, 'auto') 
+					->save('./upload/foto/' . $upload['file_name']);
+
 				}
 			}
 		}
 		
 		$data=array(
-			'id_jalan'=>$this->input->post('jalan'),
-			'id_pel'=>$this->input->post('id_pel'),
-			'no_gardu'=>$this->input->post('no_gardu'),
-			'no_pal'=>$this->input->post('no_pal'),
-			'jenis'=>$this->input->post('jenis'),
-			'kwh'=>$this->input->post('kwh'),
-			'daya'=>$this->input->post('daya'),
-			'posisi'=>$this->input->post('posisi'),
-			'kondisi'=>$this->input->post('kondisi'),
-			'keterangan'=>$this->input->post('keterangan'),
-			'lat'=>$this->input->post('lat'),
-			'lng'=>$this->input->post('lng'),
+			'id_jalan'=>$this->request->getPost('jalan'),
+			'id_pel'=>$this->request->getPost('id_pel'),
+			'no_gardu'=>$this->request->getPost('no_gardu'),
+			'no_pal'=>$this->request->getPost('no_pal'),
+			'jenis'=>$this->request->getPost('jenis'),
+			'kwh'=>$this->request->getPost('kwh'),
+			'daya'=>$this->request->getPost('daya'),
+			'posisi'=>$this->request->getPost('posisi'),
+			'kondisi'=>$this->request->getPost('kondisi'),
+			'keterangan'=>$this->request->getPost('keterangan'),
+			'lat'=>$this->request->getPost('lat'),
+			'lng'=>$this->request->getPost('lng'),
 		);
-		$this->model_app->updateData('tbl_pju',$data,$id);
+		$this->model->updateData('tbl_pju',$data,$id);
 		redirect('adminpju');
 	}
 	
 	public function hapus(){
-		$id['id_pju'] = $this->uri->segment(3);
-        $this->model_app->deleteData('tbl_pju',$id);
+		$id['id_pju'] = $this->request->getUri()->getSegment(3);
+        $this->model->deleteData('tbl_pju',$id);
         redirect('adminpju');
 	}
 	
@@ -300,37 +308,37 @@ class Adminpju extends CI_Controller {
 			'dt_kondisi'=>$this->model->getAllKondisiLampu(),
 			'peta'=>$this->googlemaps->create_map(),
 		);
-		$this->load->view('pages/v_header',$data);
-		$this->load->view('pju/v_peta');
-		$this->load->view('pages/v_footer');
+		return view('pages/v_header',$data);
+		return view('pju/v_peta');
+		return view('pages/v_footer');
 	}
 	
 	public function fpeta(){
-		if($this->input->post('kecamatan')!=""){
-			$kec = $this->input->post('kecamatan');
+		if($this->request->getPost('kecamatan')!=""){
+			$kec = $this->request->getPost('kecamatan');
 		} else {
 			$kec = "%%";
 		}
 		
-		if($this->input->post('jalan')!=""){
-			$jln = $this->input->post('jalan');
+		if($this->request->getPost('jalan')!=""){
+			$jln = $this->request->getPost('jalan');
 		} else {
 			$jln = "%%";
 		}
 		
-		if($this->input->post('jenis')!=""){
-			$jns = $this->input->post('jenis');
+		if($this->request->getPost('jenis')!=""){
+			$jns = $this->request->getPost('jenis');
 		} else {
 			$jns = "%%";
 		}
 		
-		if($this->input->post('kondisi')!=""){
-			$kds = $this->input->post('kondisi');
+		if($this->request->getPost('kondisi')!=""){
+			$kds = $this->request->getPost('kondisi');
 		} else {
 			$kds = "%%";
 		}
 		
-		$pju = $this->model_app->getFilterPeta($kec,$jln,$jns,$kds);
+		$pju = $this->model->getFilterPeta($kec,$jln,$jns,$kds);
 		
 		$confmap = array(
 			'center'=>'-6.99926531, 109.13596825',
@@ -363,14 +371,14 @@ class Adminpju extends CI_Controller {
 			'dt_kondisi'=>$this->model->getAllKondisiLampu(),
 			'peta'=>$this->googlemaps->create_map(),
 		);
-		$this->load->view('pages/v_header',$data);
-		$this->load->view('pju/v_peta');
-		$this->load->view('pages/v_footer');
+		return view('pages/v_header',$data);
+		return view('pju/v_peta');
+		return view('pages/v_footer');
 	}
 	
 	public function lihat(){
-		$id = $this->uri->segment(3);
-		$pju = $this->model_app->getLihatPju($id);
+		$id = $this->request->getUri()->getSegment(3);
+		$pju = $this->model->getLihatPju($id);
 		
 		foreach($pju as $row){
 			$confmap = array(
@@ -399,14 +407,14 @@ class Adminpju extends CI_Controller {
 			'peta'=>$this->googlemaps->create_map(),
 			'dt_pju'=>$pju,
 		);
-		$this->load->view('pages/v_header',$data);
-		$this->load->view('pju/v_lihat_pju');
-		$this->load->view('pages/v_footer');
+		return view('pages/v_header',$data);
+		return view('pju/v_lihat_pju');
+		return view('pages/v_footer');
 	}
 	
 	public function get_jalan(){
-		$id['id_kecamatan'] = $this->input->get('id', TRUE);
-		$jalan = $this->model->getSelectedData('tbl_jalan',$id)->result();
+		$id['id_kecamatan'] = $this->request->getPost('id', TRUE);
+		$jalan = $this->model->getSelectedData('tbl_jalan',$id)->getResult();
 		echo json_encode($jalan);
 	}
 }

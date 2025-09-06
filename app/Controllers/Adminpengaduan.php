@@ -1,30 +1,46 @@
-<?php 
-defined('BASEPATH') OR exit('No direct script access allowed');
+<?php
 
-class Adminpengaduan extends CI_Controller {
-	function __construct(){
-		parent::__construct();
-		$this->load->model('model_backend','model');
-		$this->load->library('pagination');
-		$this->load->library('googlemaps');
-		$this->load->helper('text');
-		$this->load->library('upload');
-		$this->load->library('image_lib');
-		if($this->session->userdata('login') != 1 ){
-            redirect('login');
-        };
+namespace App\Controllers;
+
+use App\Models\Model_backend;
+use CodeIgniter\Controller;
+
+class Adminpengaduan extends BaseController
+{
+    protected $model;
+    protected $pager;
+    protected $googlemaps;
+    protected $upload;
+    protected $image;
+
+    public function __construct()
+    {
+        $this->model = new Model_backend();
+
+        $this->pager      = \Config\Services::pager();      
+        $this->googlemaps = new \App\Libraries\Googlemaps(); 
+        $this->upload     = \Config\Services::upload();     
+        $this->image      = \Config\Services::image();      
+
+        helper(['text', 'form']);
+
+        $session = session();
+        if ($session->get('login') != 1) {
+            redirect()->to('login')->send(); 
+            exit;
+        }
 	}
 	
 	public function index(){
-		if($this->uri->segment(3)==FALSE){
+		if($this->request->getUri()->getSegment(3)==FALSE){
 			$dari = 0;
 		} else {
-			$dari = $this->uri->segment(3);
+			$dari = $this->request->getUri()->getSegment(3);
 		};
 
 		$num = $this->model->getJmlPengaduan();
 		$config=array(
-			'base_url'=>base_url().$this->router->fetch_class().'/'.$this->router->fetch_method(),
+			'base_url' => base_url() . service('router')->controllerName() . '/' . service('router')->methodName(),
 			'total_rows'=>$num,
 			'per_page'=>20,
 			'full_tag_open'=> "<ul class='pagination'>",
@@ -50,13 +66,13 @@ class Adminpengaduan extends CI_Controller {
 			'start'=>$dari,
 		);
 		$this->pagination->initialize($config);
-		$this->load->view('pages/v_header',$data);
-		$this->load->view('pengaduan/v_pengaduan');
-		$this->load->view('pages/v_footer');
+		return view('pages/v_header',$data);
+		return view('pengaduan/v_pengaduan');
+		return view('pages/v_footer');
 	}
 	
 	public function verifikasi(){
-		$id = $this->uri->segment(3);
+		$id = $this->request->getUri()->getSegment(3);
 		$confmap = array(
 			'center'=>'-6.99926531, 109.13596825',
 			'zoom'=>11,
@@ -78,28 +94,28 @@ class Adminpengaduan extends CI_Controller {
 			'dt_pengaduan'=>$this->model->getDataPengaduan($id),
 			'peta'=>$this->googlemaps->create_map(),
 		);
-		$this->load->view('pages/v_header',$data);
-		$this->load->view('pengaduan/v_verifikasi');
-		$this->load->view('pages/v_footer');
+		return view('pages/v_header',$data);
+		return view('pengaduan/v_verifikasi');
+		return view('pages/v_footer');
 	}
 	
 	public function proses_verifikasi(){
-		$idx['id_pengaduan'] = $this->uri->segment(3);
-		$id = $this->uri->segment(3);
+		$idx['id_pengaduan'] = $this->request->getUri()->getSegment(3);
+		$id = $this->request->getUri()->getSegment(3);
 		$tgl = date('Y-m-d H:i:s');
 		$data=array(
-			'id_jalan'=>$this->input->post('jalan'),
-			'laporan'=>$this->input->post('laporan'),
-			'media'=>$this->input->post('media'),
-			'lat'=>$this->input->post('lat'),
-			'lng'=>$this->input->post('lng'),
+			'id_jalan'=>$this->request->getPost('jalan'),
+			'laporan'=>$this->request->getPost('laporan'),
+			'media'=>$this->request->getPost('media'),
+			'lat'=>$this->request->getPost('lat'),
+			'lng'=>$this->request->getPost('lng'),
 			'status'=>2,
 			'aktif'=>1,
 		);
 		$tindakan=array(
 			'id_pengaduan'=>$id,
 			'tgl_tindakan'=>$tgl,
-			'tindakan'=>$this->input->post('tindakan'),
+			'tindakan'=>$this->request->getPost('tindakan'),
 		);
 		$status=array(
 			'id_pengaduan'=>$id,
@@ -107,15 +123,15 @@ class Adminpengaduan extends CI_Controller {
 			'keterangan'=>'Pengaduan Diverifikasi',
 			'tgl_status'=>$tgl,
 		);
-		$this->model_app->updateData('tbl_pengaduan',$data,$idx);
-		$this->model_app->insertData('tbl_tindakan',$tindakan);
-		$this->model_app->insertData('tbl_pengaduan_status',$status);
+		$this->model->updateData('tbl_pengaduan',$data,$idx);
+		$this->model->insertData('tbl_tindakan',$tindakan);
+		$this->model->insertData('tbl_pengaduan_status',$status);
 		redirect('adminpengaduan');
 	}
 	
 	public function proses_pengaduan(){
-		$idx['id_pengaduan'] = $this->uri->segment(3);
-		$id = $this->uri->segment(3);
+		$idx['id_pengaduan'] = $this->request->getUri()->getSegment(3);
+		$id = $this->request->getUri()->getSegment(3);
 		$tgl = date('Y-m-d H:i:s');
 		$data=array(
 			'status'=>3,
@@ -123,7 +139,7 @@ class Adminpengaduan extends CI_Controller {
 		$tindakan=array(
 			'id_pengaduan'=>$id,
 			'tgl_tindakan'=>$tgl,
-			'tindakan'=>$this->input->post('tindakan'),
+			'tindakan'=>$this->request->getPost('tindakan'),
 		);
 		$status=array(
 			'id_pengaduan'=>$id,
@@ -131,15 +147,15 @@ class Adminpengaduan extends CI_Controller {
 			'keterangan'=>'Pengaduan Dalam Proses',
 			'tgl_status'=>$tgl,
 		);
-		$this->model_app->updateData('tbl_pengaduan',$data,$idx);
-		$this->model_app->insertData('tbl_tindakan',$tindakan);
-		$this->model_app->insertData('tbl_pengaduan_status',$status);
+		$this->model->updateData('tbl_pengaduan',$data,$idx);
+		$this->model->insertData('tbl_tindakan',$tindakan);
+		$this->model->insertData('tbl_pengaduan_status',$status);
 		redirect('adminpengaduan');
 	}
 	
 	public function inputperbaikan(){
-		$id = $this->uri->segment(3);
-		$idx['id_pengaduan'] = $this->uri->segment(3);
+		$id = $this->request->getUri()->getSegment(3);
+		$idx['id_pengaduan'] = $this->request->getUri()->getSegment(3);
 		$pgn = $this->model->getJalanPengaduan($id);
 		
 		foreach($pgn as $row){
@@ -164,20 +180,20 @@ class Adminpengaduan extends CI_Controller {
 			'peta'=>$this->googlemaps->create_map(),
 			'dt_pengaduan'=>$pgn,
 		);
-		$this->load->view('pages/v_header',$data);
-		$this->load->view('pengaduan/v_perbaikan');
-		$this->load->view('pages/v_footer');
+		return view('pages/v_header',$data);
+		return view('pengaduan/v_perbaikan');
+		return view('pages/v_footer');
 	}
 	
 	public function proses_perbaikan(){
-		$id = $this->uri->segment(3);
-		$idx['id_pengaduan'] = $this->uri->segment(3);
-		$dtpengaduan = $this->model_app->getSelectedData('tbl_pengaduan',$idx)->result();
+		$id = $this->request->getUri()->getSegment(3);
+		$idx['id_pengaduan'] = $this->request->getUri()->getSegment(3);
+		$dtpengaduan = $this->model->getSelectedData('tbl_pengaduan',$idx)->getResult();
 		foreach($dtpengaduan as $row){
 			$nama = $row->pelapor;
 			$telp = $row->no_telp;
 		}
-		$tgl = $this->input->post('tgl_perbaikan');
+		$tgl = $this->request->getPost('tgl_perbaikan');
 		if(!empty($_FILES['foto']['name'])){
 			$length = count($_FILES['foto']['name']);
 			for($i = 0; $i < $length; $i++){
@@ -200,20 +216,13 @@ class Adminpengaduan extends CI_Controller {
 						'id_pengaduan'=>$id,
 						'nama_foto'=>$upload['file_name'],
 					);
-					$this->model_app->insertData('tbl_tindakan_foto',$foto[$i]);
+					$this->model->insertData('tbl_tindakan_foto',$foto[$i]);
 					
-					$image=array(
-						'image_library'=>'gd2',
-						'source_image'=>'./upload/temp/'.$upload['file_name'],
-						'new_image'=>'./upload/foto/perbaikan/'.$upload['file_name'],
-						'create_thumb'=>TRUE,
-						'thumb_marker'=>'',
-						'maintain_ratio' => TRUE,
-						'width' => 600,
-					);
-					$this->image_lib->initialize($image);
-					$this->image_lib->resize();
-					$this->image_lib->clear();
+					$image = \Config\Services::image()
+					->withFile('./upload/temp/' . $upload['file_name'])
+					->resize(600, 600, true, 'auto') // maintain_ratio TRUE
+					->save('./upload/foto/perbaikan/' . $upload['file_name']);
+
 				}
 			}
 		}
@@ -224,7 +233,7 @@ class Adminpengaduan extends CI_Controller {
 		$tindakan=array(
 			'id_pengaduan'=>$id,
 			'tgl_tindakan'=>$tgl,
-			'tindakan'=>$this->input->post('tindakan'),
+			'tindakan'=>$this->request->getPost('tindakan'),
 		);
 		$status=array(
 			'id_pengaduan'=>$id,
@@ -232,16 +241,16 @@ class Adminpengaduan extends CI_Controller {
 			'keterangan'=>'Pengaduan Selesai Diproses',
 			'tgl_status'=>$tgl,
 		);
-		$this->model_app->updateData('tbl_pengaduan',$data,$idx);
-		$this->model_app->insertData('tbl_tindakan',$tindakan);
-		$this->model_app->insertData('tbl_pengaduan_status',$status);
+		$this->model->updateData('tbl_pengaduan',$data,$idx);
+		$this->model->insertData('tbl_tindakan',$tindakan);
+		$this->model->insertData('tbl_pengaduan_status',$status);
 		//$this->kirimsurvey($id,$nama,$telp);
 		redirect('adminpengaduan');
 	}
 	
 	public function lihat(){
-		$id = $this->uri->segment(3);
-		$idx['id_pengaduan'] = $this->uri->segment(3);
+		$id = $this->request->getUri()->getSegment(3);
+		$idx['id_pengaduan'] = $this->request->getUri()->getSegment(3);
 		$pgn = $this->model->getJalanPengaduan($id);
 		
 		foreach($pgn as $row){
@@ -274,13 +283,13 @@ class Adminpengaduan extends CI_Controller {
 			'pengaduan_data'=>'active',
 			'peta'=>$this->googlemaps->create_map(),
 			'dt_pengaduan'=>$pgn,
-			'dt_status'=>$this->model->getSelectedData('tbl_pengaduan_status',$idx)->result(),
-			'dt_tindakan'=>$this->model->getSelectedData('tbl_tindakan',$idx)->result(),
-			'dt_foto'=>$this->model->getSelectedData('tbl_tindakan_foto',$idx)->result(),
+			'dt_status'=>$this->model->getSelectedData('tbl_pengaduan_status',$idx)->getResult(),
+			'dt_tindakan'=>$this->model->getSelectedData('tbl_tindakan',$idx)->getResult(),
+			'dt_foto'=>$this->model->getSelectedData('tbl_tindakan_foto',$idx)->getResult(),
 		);
-		$this->load->view('pages/v_header',$data);
-		$this->load->view('pengaduan/v_lihat_pengaduan');
-		$this->load->view('pages/v_footer');
+		return view('pages/v_header',$data);
+		return view('pengaduan/v_lihat_pengaduan');
+		return view('pages/v_footer');
 	}
 	
 	public function tambah(){
@@ -304,25 +313,25 @@ class Adminpengaduan extends CI_Controller {
 			'dt_kecamatan'=>$this->model->getAllKecamatan(),
 			'peta'=>$this->googlemaps->create_map(),
 		);
-		$this->load->view('pages/v_header',$data);
-		$this->load->view('pengaduan/v_tambah_pengaduan');
-		$this->load->view('pages/v_footer');
+		return view('pages/v_header',$data);
+		return view('pengaduan/v_tambah_pengaduan');
+		return view('pages/v_footer');
 	}
 	
 	public function proses_tambah(){
-		$tgl = date("Y-m-d",strtotime($this->input->post('tgl_pengaduan')));
-		$id = $this->model_app->getKodePengaduan();
+		$tgl = date("Y-m-d",strtotime($this->request->getPost('tgl_pengaduan')));
+		$id = $this->model->getKodePengaduan();
 		if(empty($_FILES['foto']['name'])){
 			$data=array(
 				'id_pengaduan'=>$id,
-				'pelapor'=>$this->input->post('nama'),
-				'no_telp'=>$this->input->post('telp'),
-				'id_jalan'=>$this->input->post('jalan'),
-				'laporan'=>$this->input->post('laporan'),
-				'media'=>$this->input->post('media'),
+				'pelapor'=>$this->request->getPost('nama'),
+				'no_telp'=>$this->request->getPost('telp'),
+				'id_jalan'=>$this->request->getPost('jalan'),
+				'laporan'=>$this->request->getPost('laporan'),
+				'media'=>$this->request->getPost('media'),
 				'tgl_pengaduan'=>$tgl,
-				'lat'=>$this->input->post('lat'),
-				'lng'=>$this->input->post('lng'),
+				'lat'=>$this->request->getPost('lat'),
+				'lng'=>$this->request->getPost('lng'),
 				'status'=>3,
 				'aktif'=>1,
 			);
@@ -335,11 +344,11 @@ class Adminpengaduan extends CI_Controller {
 			$tindakan=array(
 				'id_pengaduan'=>$id,
 				'tgl_tindakan'=>$tgl,
-				'tindakan'=>$this->input->post('tindakan'),
+				'tindakan'=>$this->request->getPost('tindakan'),
 			);
-			$this->model_app->insertData('tbl_pengaduan',$data);
-			$this->model_app->insertData('tbl_pengaduan_status',$status);
-			$this->model_app->insertData('tbl_tindakan',$tindakan);
+			$this->model->insertData('tbl_pengaduan',$data);
+			$this->model->insertData('tbl_pengaduan_status',$status);
+			$this->model->insertData('tbl_tindakan',$tindakan);
 		} else {
 			$config=array(
 				'upload_path'=>'./upload/temp/',
@@ -348,7 +357,7 @@ class Adminpengaduan extends CI_Controller {
 				'file_name'=>$id,
 			);
 			$this->upload->initialize($config);
-			if(!$this->upload->do_upload($foto)){
+			if(!$this->upload->do_upload($foto='foto')){
 				$data=array(
 					'title'=>'Tambah Perbaikan Lampu PJU',
 					'open_pengaduan'=>'open',
@@ -357,20 +366,20 @@ class Adminpengaduan extends CI_Controller {
 					'dt_kecamatan'=>$this->model->getAllKecamatan(),
 					'peta'=>$this->googlemaps->create_map(),
 				);
-				$this->load->view('pages/v_header',$data);
-				$this->load->view('pengaduan/v_tambah_pengaduan');
-				$this->load->view('pages/v_footer');
+				return view('pages/v_header',$data);
+				return view('pengaduan/v_tambah_pengaduan');
+				return view('pages/v_footer');
 			} else {
 				$upload = $this->upload->data();
 				$data=array(
 					'id_pengaduan'=>$id,
-					'pelapor'=>$this->input->post('nama'),
-					'no_telp'=>$this->input->post('telp'),
-					'id_jalan'=>$this->input->post('jalan'),
-					'laporan'=>$this->input->post('laporan'),
+					'pelapor'=>$this->request->getPost('nama'),
+					'no_telp'=>$this->request->getPost('telp'),
+					'id_jalan'=>$this->request->getPost('jalan'),
+					'laporan'=>$this->request->getPost('laporan'),
 					'tgl_pengaduan'=>$tgl,
-					'lat'=>$this->input->post('lat'),
-					'lng'=>$this->input->post('lng'),
+					'lat'=>$this->request->getPost('lat'),
+					'lng'=>$this->request->getPost('lng'),
 					'status'=>3,
 					'aktif'=>1,
 					'foto'=>$upload['file_name'],
@@ -384,24 +393,16 @@ class Adminpengaduan extends CI_Controller {
 				$tindakan=array(
 					'id_pengaduan'=>$id,
 					'tgl_tindakan'=>$tgl,
-					'tindakan'=>$this->input->post('tindakan'),
+					'tindakan'=>$this->request->getPost('tindakan'),
 				);
-				$this->model_app->insertData('tbl_pengaduan',$data);
-				$this->model_app->insertData('tbl_pengaduan_status',$status);
-				$this->model_app->insertData('tbl_tindakan',$tindakan);
-				$image=array(
-					'image_library'=>'gd2',
-					'source_image'=>'./upload/temp/'.$upload['file_name'],
-					'new_image'=>'./upload/foto/pengaduan/'.$upload['file_name'],
-					'create_thumb'=>TRUE,
-					'thumb_marker'=>'',
-					'maintain_ratio' => TRUE,
-					'width' => 1200,
-					'height' => 800,
-				);
-				$this->image_lib->initialize($image);
-				$this->image_lib->resize();
-				$this->image_lib->clear();
+				$this->model->insertData('tbl_pengaduan',$data);
+				$this->model->insertData('tbl_pengaduan_status',$status);
+				$this->model->insertData('tbl_tindakan',$tindakan);
+				$image = \Config\Services::image()
+				->withFile('./upload/temp/' . $upload['file_name'])
+				->resize(1200, 800, true, 'auto') // maintain_ratio TRUE
+				->save('./upload/foto/pengaduan/' . $upload['file_name']);
+
 			}
 		}
 		redirect('adminpengaduan');
@@ -440,13 +441,13 @@ class Adminpengaduan extends CI_Controller {
 			'dt_kecamatan'=>$this->model->getAllKecamatan(),
 			'peta'=>$this->googlemaps->create_map(),
 		);
-		$this->load->view('pages/v_header',$data);
-		$this->load->view('pengaduan/v_peta');
-		$this->load->view('pages/v_footer');
+		return view('pages/v_header',$data);
+		return view('pengaduan/v_peta');
+		return view('pages/v_footer');
 	}
 	
 	public function cari(){
-		$id = $this->input->post('cari');
+		$id = $this->request->getPost('cari');
 		$data=array(
 			'title'=>'Pengaduan LPJU Kabupaten Tegal',
 			'open_pengaduan'=>'open',
@@ -454,21 +455,24 @@ class Adminpengaduan extends CI_Controller {
 			'dt_pengaduan'=>$this->model->getCariPengaduan($id),
 			'start'=>0,
 		);
-		$this->load->view('pages/v_header',$data);
-		$this->load->view('pengaduan/v_pengaduan');
-		$this->load->view('pages/v_footer');
+		return view('pages/v_header',$data);
+		return view('pengaduan/v_pengaduan');
+		return view('pages/v_footer');
 	}
 	
 	public function tolak(){
-		$id['id_pengaduan'] = $this->uri->segment(3);
+		$id['id_pengaduan'] = $this->request->getUri()->getSegment(3);
+		$idx['id_pengaduan'] = $this->request->getUri()->getSegment(3);
+		$tgl = date('Y-m-d H:i:s');
+
 		$data=array(
 			'aktif'=>0,
 			'status'=>0,
 		);
         $tindakan=array(
 			'id_pengaduan'=>$id,
-			'tgl_tindakan'=>$tgl,
-			'tindakan'=>$this->input->post('tindakan'),
+			'tgl_tindakan'=>$tgl=date('Y-m-d H:i:s'),
+			'tindakan'=>$this->request->getPost('tindakan'),
 		);
 		$status=array(
 			'id_pengaduan'=>$id,
@@ -476,21 +480,21 @@ class Adminpengaduan extends CI_Controller {
 			'keterangan'=>'Pengaduan Ditolak',
 			'tgl_status'=>$tgl,
 		);
-		$this->model_app->updateData('tbl_pengaduan',$data,$idx);
-		$this->model_app->insertData('tbl_tindakan',$tindakan);
-		$this->model_app->insertData('tbl_pengaduan_status',$status);
+		$this->model->updateData('tbl_pengaduan',$data,$idx);
+		$this->model->insertData('tbl_tindakan',$tindakan);
+		$this->model->insertData('tbl_pengaduan_status',$status);
 		redirect('adminpengaduan');
 	}
 	
 	public function hapus(){
-		$id['id_pengaduan'] = $this->uri->segment(3);
+		$id['id_pengaduan'] = $this->request->getUri()->getSegment(3);
 		$table = array('tbl_pengaduan','tbl_tindakan','tbl_tindakan_foto','tbl_pengaduan_status');
         $this->model->deleteData($table,$id);
         redirect('adminpengaduan');
 	}
 	
 	public function edit(){
-		$id = $this->uri->segment(3);
+		$id = $this->request->getUri()->getSegment(3);
 		$pgn = $this->model->getJalanPengaduan($id);
 		foreach($pgn as $row){
 			$confmap = array(
@@ -530,22 +534,22 @@ class Adminpengaduan extends CI_Controller {
 			'dt_pengaduan'=>$this->model->getJalanPengaduan($id),
 			'peta'=>$this->googlemaps->create_map(),
 		);
-		$this->load->view('pages/v_header',$data);
-		$this->load->view('pengaduan/v_edit_pengaduan');
-		$this->load->view('pages/v_footer');
+		return view('pages/v_header',$data);
+		return view('pengaduan/v_edit_pengaduan');
+		return view('pages/v_footer');
 	}
 	
 	public function proses_edit(){
-		$id = $this->uri->segment(3);
-		$idx['id_pengaduan'] = $this->uri->segment(3);
+		$id = $this->request->getUri()->getSegment(3);
+		$idx['id_pengaduan'] = $this->request->getUri()->getSegment(3);
 		$data=array(
-			'id_jalan'=>$this->input->post('jalan'),
-			'laporan'=>$this->input->post('laporan'),
-			'media'=>$this->input->post('media'),
-			'lat'=>$this->input->post('lat'),
-			'lng'=>$this->input->post('lng'),
+			'id_jalan'=>$this->request->getPost('jalan'),
+			'laporan'=>$this->request->getPost('laporan'),
+			'media'=>$this->request->getPost('media'),
+			'lat'=>$this->request->getPost('lat'),
+			'lng'=>$this->request->getPost('lng'),
 		);	
-		$this->model_app->updateData('tbl_pengaduan',$data,$idx);
+		$this->model->updateData('tbl_pengaduan',$data,$idx);
 		redirect('adminpengaduan/lihat/'.$id);
 	}
 	

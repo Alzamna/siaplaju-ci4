@@ -1,17 +1,39 @@
-<?php 
-defined('BASEPATH') OR exit('No direct script access allowed');
+<?php
 
-class Adminrekap extends CI_Controller {
-	function __construct(){
-		parent::__construct();
-		$this->load->model('model_backend','model');
-		$this->load->library('pagination');
-		$this->load->library('googlemaps');
-		$this->load->library(array('PHPExcel','PHPExcel/IOFactory'));
-		if($this->session->userdata('login') != 1 ){
-            redirect('login');
-        };
-	}
+namespace App\Controllers;
+
+use App\Models\Model_backend;
+use CodeIgniter\Controller;
+use IOFactory;
+use PHPExcel;
+use PHPExcel_Style_Alignment;
+use PHPExcel_Style_Border;
+use PHPExcel_Style_Fill;
+
+class Adminrekap extends BaseController
+{
+    protected $model;
+    protected $pagination;
+    protected $googlemaps;
+
+    public function __construct()
+    {
+        // load model
+        $this->model = new Model_backend();
+
+        // load services
+        $this->pagination = \Config\Services::pager();
+        $this->googlemaps = new \App\Libraries\Googlemaps();
+
+        // load helper
+        helper(['date', 'text']);
+
+        // cek login
+        $session = session();
+        if ($session->get('login') != 1) {
+            return redirect()->to('login');
+        }
+    }
 	
 	public function pju(){
 		$data=array(
@@ -20,32 +42,32 @@ class Adminrekap extends CI_Controller {
 			'rekap_pju'=>'active',
 			'dt_kecamatan'=>$this->model->getAllKecamatan(),
 		);
-		$this->load->view('pages/v_header',$data);
-		$this->load->view('rekap/v_rekap_pju');
-		$this->load->view('pages/v_footer');
+		return view('pages/v_header',$data);
+		return view('rekap/v_rekap_pju');
+		return view('pages/v_footer');
 	}
 	
 	public function fpju(){
-		if($this->input->post('kecamatan')!=""){
-			$kec = $this->input->post('kecamatan');
+		if($this->request->getPost('kecamatan')!=""){
+			$kec = $this->request->getPost('kecamatan');
 		} else {
 			$kec = "%%";
 		}
 		
-		if($this->input->post('jalan')!=""){
-			$jln = $this->input->post('jalan');
+		if($this->request->getPost('jalan')!=""){
+			$jln = $this->request->getPost('jalan');
 		} else {
 			$jln = "%%";
 		}
 		
-		if($this->input->post('jenis')!=""){
-			$jns = $this->input->post('jenis');
+		if($this->request->getPost('jenis')!=""){
+			$jns = $this->request->getPost('jenis');
 		} else {
 			$jns = "%%";
 		}
 		
-		if($this->input->post('kondisi')!=""){
-			$kds = $this->input->post('kondisi');
+		if($this->request->getPost('kondisi')!=""){
+			$kds = $this->request->getPost('kondisi');
 		} else {
 			$kds = "%%";
 		}
@@ -58,16 +80,16 @@ class Adminrekap extends CI_Controller {
 			'dt_rekap'=>$this->model->getFilterRekapPju($kec,$jln,$jns,$kds),
 			'export'=>'?kec='.$kec.'&jln='.$jln.'&jns='.$jns.'&kds='.$kds,
 		);
-		$this->load->view('pages/v_header',$data);
-		$this->load->view('rekap/v_rekap_pju');
-		$this->load->view('pages/v_footer');
+		return view('pages/v_header',$data);
+		return view('rekap/v_rekap_pju');
+		return view('pages/v_footer');
 	}
 	
 	public function export_pju(){
-		$kec = $this->input->get('kec', TRUE);
-		$jln = $this->input->get('jln', TRUE);
-		$jns = $this->input->get('jns', TRUE);
-		$kds = $this->input->get('kds', TRUE);
+		$kec = $this->request->getPost('kec', TRUE);
+		$jln = $this->request->getPost('jln', TRUE);
+		$jns = $this->request->getPost('jns', TRUE);
+		$kds = $this->request->getPost('kds', TRUE);
 		$dtrekap = $this->model->getFilterRekapPju($kec,$jln,$jns,$kds);
 		
 		$objPHPExcel = new PHPExcel();
@@ -182,38 +204,38 @@ class Adminrekap extends CI_Controller {
 			'rekap_pengaduan'=>'active',
 			'dt_kecamatan'=>$this->model->getAllKecamatan(),
 		);
-		$this->load->view('pages/v_header',$data);
-		$this->load->view('rekap/v_rekap_pengaduan');
-		$this->load->view('pages/v_footer');
+		return view('pages/v_header',$data);
+		return view('rekap/v_rekap_pengaduan');
+		return view('pages/v_footer');
 	}
 	
 	public function fpengaduan(){
-		if($this->input->post('kecamatan')!=""){
-			$kec = $this->input->post('kecamatan');
+		if($this->request->getPost('kecamatan')!=""){
+			$kec = $this->request->getPost('kecamatan');
 		} else {
 			$kec = "%%";
 		}
 		
-		if($this->input->post('jalan')!=""){
-			$jln = $this->input->post('jalan');
+		if($this->request->getPost('jalan')!=""){
+			$jln = $this->request->getPost('jalan');
 		} else {
 			$jln = "%%";
 		}
 		
-		if($this->input->post('media')!=""){
-			$mda = $this->input->post('media');
+		if($this->request->getPost('media')!=""){
+			$mda = $this->request->getPost('media');
 		} else {
 			$mda = "%%";
 		}
 		
-		if($this->input->post('status')!=""){
-			$sts = $this->input->post('status');
+		if($this->request->getPost('status')!=""){
+			$sts = $this->request->getPost('status');
 		} else {
 			$sts = "%%";
 		}
 		
-		$tgl_awal = $this->input->post('tgl_awal');
-		$tgl_akhir = $this->input->post('tgl_akhir');
+		$tgl_awal = $this->request->getPost('tgl_awal');
+		$tgl_akhir = $this->request->getPost('tgl_akhir');
 		
 		$data=array(
 			'title'=>'Rekap Pengaduan Kabupaten Tegal',
@@ -223,18 +245,18 @@ class Adminrekap extends CI_Controller {
 			'dt_rekap'=>$this->model->getFilterRekapPengaduan($kec,$jln,$mda,$sts,$tgl_awal,$tgl_akhir),
 			'export'=>'?kec='.$kec.'&jln='.$jln.'&mda='.$mda.'&sts='.$sts.'&awal='.$tgl_awal.'&akhir='.$tgl_akhir,
 		);
-		$this->load->view('pages/v_header',$data);
-		$this->load->view('rekap/v_rekap_pengaduan');
-		$this->load->view('pages/v_footer');
+		return view('pages/v_header',$data);
+		return view('rekap/v_rekap_pengaduan');
+		return view('pages/v_footer');
 	}
 	
 	public function export_pengaduan(){
-		$kec = $this->input->get('kec', TRUE);
-		$jln = $this->input->get('jln', TRUE);
-		$mda = $this->input->get('mda', TRUE);
-		$sts = $this->input->get('sts', TRUE);
-		$tgl_awal = $this->input->get('awal', TRUE);
-		$tgl_akhir = $this->input->get('akhir', TRUE);
+		$kec = $this->request->getPost('kec', TRUE);
+		$jln = $this->request->getPost('jln', TRUE);
+		$mda = $this->request->getPost('mda', TRUE);
+		$sts = $this->request->getPost('sts', TRUE);
+		$tgl_awal = $this->request->getPost('awal', TRUE);
+		$tgl_akhir = $this->request->getPost('akhir', TRUE);
 		$dtrekap = $this->model->getFilterRekapPengaduan($kec,$jln,$mda,$sts,$tgl_awal,$tgl_akhir);
 		
 		$objPHPExcel = new PHPExcel();
