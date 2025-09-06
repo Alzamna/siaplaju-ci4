@@ -14,33 +14,33 @@
         <!-- END Page Container -->
 
         <!-- Codebase Core JS -->
-        <script src="<?php echo base_url('public/js/core/jquery.min.js');?>"></script>
-        <script src="<?php echo base_url('public/js/core/popper.min.js');?>"></script>
-        <script src="<?php echo base_url('public/js/core/bootstrap.min.js');?>"></script>
-        <script src="<?php echo base_url('public/js/core/jquery.slimscroll.min.js');?>"></script>
-        <script src="<?php echo base_url('public/js/core/jquery.scrollLock.min.js');?>"></script>
-        <script src="<?php echo base_url('public/js/core/jquery.appear.min.js');?>"></script>
-        <script src="<?php echo base_url('public/js/core/jquery.countTo.min.js');?>"></script>
-        <script src="<?php echo base_url('public/js/core/js.cookie.min.js');?>"></script>
-        <script src="<?php echo base_url('public/js/codebase.js');?>"></script>
+        <script src="<?php echo base_url('js/core/jquery.min.js');?>"></script>
+        <script src="<?php echo base_url('js/core/popper.min.js');?>"></script>
+        <script src="<?php echo base_url('js/core/bootstrap.min.js');?>"></script>
+        <script src="<?php echo base_url('js/core/jquery.slimscroll.min.js');?>"></script>
+        <script src="<?php echo base_url('js/core/jquery.scrollLock.min.js');?>"></script>
+        <script src="<?php echo base_url('js/core/jquery.appear.min.js');?>"></script>
+        <script src="<?php echo base_url('js/core/jquery.countTo.min.js');?>"></script>
+        <script src="<?php echo base_url('js/core/js.cookie.min.js');?>"></script>
+        <script src="<?php echo base_url('js/codebase.js');?>"></script>
 
         <!-- Page JS Plugins -->
-        <script src="<?php echo base_url('public/js/plugins/chartjs/Chart.bundle.min.js');?>"></script>
-		<script src="<?php echo base_url('public/js/plugins/datatables/jquery.dataTables.min.js');?>"></script>
-        <script src="<?php echo base_url('public/js/plugins/datatables/dataTables.bootstrap4.min.js');?>"></script>
-		<script src="<?php echo base_url('public/js/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js');?>"></script>
-		<script src="<?php echo base_url('public/js/plugins/select2/select2.full.min.js');?>"></script>
-		<script src="<?php echo base_url('public/js/plugins/jquery-auto-complete/jquery.auto-complete.min.js');?>"></script>
-        <script src="<?php echo base_url('public/js/plugins/masked-inputs/jquery.maskedinput.min.js');?>"></script>
-		<script src="<?php echo base_url('public/js/plugins/bootstrap-wizard/jquery.bootstrap.wizard.js');?>"></script>
-		<script src="<?php echo base_url('public/js/plugins/jquery-validation/jquery.validate.min.js');?>"></script>
-		<script src="<?php echo base_url('public/js/plugins/magnific-popup/magnific-popup.min.js');?>"></script>
+        <script src="<?php echo base_url('js/plugins/chartjs/Chart.bundle.min.js');?>"></script>
+		<script src="<?php echo base_url('js/plugins/datatables/jquery.dataTables.min.js');?>"></script>
+        <script src="<?php echo base_url('js/plugins/datatables/dataTables.bootstrap4.min.js');?>"></script>
+		<script src="<?php echo base_url('js/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js');?>"></script>
+		<script src="<?php echo base_url('js/plugins/select2/select2.full.min.js');?>"></script>
+		<script src="<?php echo base_url('js/plugins/jquery-auto-complete/jquery.auto-complete.min.js');?>"></script>
+        <script src="<?php echo base_url('js/plugins/masked-inputs/jquery.maskedinput.min.js');?>"></script>
+		<script src="<?php echo base_url('js/plugins/bootstrap-wizard/jquery.bootstrap.wizard.js');?>"></script>
+		<script src="<?php echo base_url('js/plugins/jquery-validation/jquery.validate.min.js');?>"></script>
+		<script src="<?php echo base_url('js/plugins/magnific-popup/magnific-popup.min.js');?>"></script>
 		
         <!-- Page JS Code -->
-        <script src="<?php echo base_url('public/js/pages/be_pages_dashboard.js');?>"></script>
-		<script src="<?php echo base_url('public/js/pages/be_tables_datatables.js');?>"></script>
-		<script src="<?php echo base_url('public/js/pages/be_forms_plugins.js');?>"></script>
-		<script src="<?php echo base_url('public/js/pages/be_forms_wizard.js');?>"></script>
+        <script src="<?php echo base_url('js/pages/be_pages_dashboard.js');?>"></script>
+		<script src="<?php echo base_url('js/pages/be_tables_datatables.js');?>"></script>
+		<script src="<?php echo base_url('js/pages/be_forms_plugins.js');?>"></script>
+		<script src="<?php echo base_url('js/pages/be_forms_wizard.js');?>"></script>
         <script>
             jQuery(function () {
                 // Init page helpers (BS Datepicker + BS Colorpicker + BS Maxlength + Select2 + Masked Input + Range Sliders + Tags Inputs plugins)

@@ -9,8 +9,8 @@
 		<meta name="description" content="Sistem Informasi Alat Penerangan Lampu Jalan Umum Kabupaten Tegal" />
 		<meta name="Author" content="Dinas Perhubungan Kabupaten Tegal" />
 		
-		<link href="<?php echo base_url('public/home/images/favicon.png');?>" rel="icon" type="image/png">
-		<link href="<?php echo base_url('public/home/images/favicon.ico');?>" rel="shortcut icon">
+		<link href="<?php echo base_url('home/images/favicon.png');?>" rel="icon" type="image/png">
+		<link href="<?php echo base_url('home/images/favicon.ico');?>" rel="shortcut icon">
 	
 		<!-- mobile settings -->
 		<meta name="viewport" content="width=device-width, maximum-scale=1, initial-scale=1, user-scalable=0" />
@@ -20,19 +20,19 @@
 		<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400%7CRaleway:300,400,500,600,700%7CLato:300,400,400italic,600,700" rel="stylesheet" type="text/css" />
 
 		<!-- CORE CSS -->
-		<link href="<?php echo base_url('public/home/plugins/bootstrap/css/bootstrap.min.css')?>" rel="stylesheet" type="text/css" />
+		<link href="<?php echo base_url('home/plugins/bootstrap/css/bootstrap.min.css')?>" rel="stylesheet" type="text/css" />
 
 		<!-- REVOLUTION SLIDER -->
-		<link href="<?php echo base_url('public/home/plugins/slider.revolution/css/extralayers.css')?>" rel="stylesheet" type="text/css" />
-		<link href="<?php echo base_url('public/home/plugins/slider.revolution/css/settings.css')?>" rel="stylesheet" type="text/css" />
+		<link href="<?php echo base_url('home/plugins/slider.revolution/css/extralayers.css')?>" rel="stylesheet" type="text/css" />
+		<link href="<?php echo base_url('home/plugins/slider.revolution/css/settings.css')?>" rel="stylesheet" type="text/css" />
 
 		<!-- THEME CSS -->
-		<link href="<?php echo base_url('public/home/css/essentials.css')?>" rel="stylesheet" type="text/css" />
-		<link href="<?php echo base_url('public/home/css/layout.css')?>" rel="stylesheet" type="text/css" />
+		<link href="<?php echo base_url('home/css/essentials.css')?>" rel="stylesheet" type="text/css" />
+		<link href="<?php echo base_url('home/css/layout.css')?>" rel="stylesheet" type="text/css" />
 
 		<!-- PAGE LEVEL SCRIPTS -->
-		<link href="<?php echo base_url('public/home/css/header-4.css')?>" rel="stylesheet" type="text/css" />
-		<link href="<?php echo base_url('public/home/css/color_scheme/darkblue.css')?>" rel="stylesheet" type="text/css" id="color_scheme" />
+		<link href="<?php echo base_url('home/css/header-4.css')?>" rel="stylesheet" type="text/css" />
+		<link href="<?php echo base_url('home/css/color_scheme/darkblue.css')?>" rel="stylesheet" type="text/css" id="color_scheme" />
 	
 		<?php if(isset($peta)){
 			echo $peta['js']; } ?>
@@ -93,7 +93,7 @@
 						</button>
 
 						<a class="logo pull-left" href="<?php echo site_url('');?>">
-							<img src="<?php echo base_url('public/home/images/siaplaju-logo.png')?>" alt="" />
+							<img src="<?php echo base_url('home/images/siaplaju-logo.png')?>" alt="" />
 						</a>
 						<div class="navbar-collapse pull-right nav-main-collapse collapse submenu-color">
 							<nav class="nav-main">
