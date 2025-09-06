@@ -105,7 +105,7 @@
 									</li>
 									
 									<li class="<?php if(isset($aktif_peta)){echo $aktif_peta ;}?>">
-										<a href="https://webgis.siaplaju.com">
+										<a href="https://webgis.siaplaju.com" target="_blank" rel="noopener noreferrer">
 											<span class="theme-color">PETA PERLENGKAPAN JALAN</span>
 										</a>
 									</li>
@@ -116,7 +116,7 @@
 										</a>
 										<ul class="dropdown-menu">
 											<li class="<?php if(isset($aktif_pengaduan)){echo $aktif_pengaduan;}?>"><a href="<?php echo site_url('pengaduan')?>">PENGADUAN LAMPU PENERANGAN / PERLENGKAPAN JALAN</a></li>
-											<li><a href="https://webgis.siaplaju.com/pengaduan">PENGADUAN PELAYANAN PERHUBUNGAN</a></li>
+											<li><a href="https://webgis.siaplaju.com/pengaduan" target="_blank" rel="noopener noreferrer">PENGADUAN PELAYANAN PERHUBUNGAN</a></li>
 										</ul>
 									</li>
 									

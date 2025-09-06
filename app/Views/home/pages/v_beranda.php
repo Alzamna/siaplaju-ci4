@@ -29,7 +29,7 @@
 		<div class="col-md-12">
 			<div class="row text-center">
 				<div class="col-lg-4 col-md-6 col-sm-12">
-					<a href="http://webgis.siaplaju.com">
+					<a href="http://webgis.siaplaju.com" target="_blank" rel="noopener noreferrer">
 						<img class="img-responsive" style="height:150px;width:auto" src="<?php base_url('home/images/icon/map-icon.jpg');?>" alt="" />
 						<div class="caption text-center margin-top-10">
 							<h4 class="nomargin">PETA PERLENGKAPAN JALAN</h4>
