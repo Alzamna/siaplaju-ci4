@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use App\Libraries\Googlemaps;
 use App\Models\Model_app;
 use CodeIgniter\Controller;
 use CodeIgniter\I18n\Time;
@@ -9,12 +10,13 @@ use CodeIgniter\I18n\Time;
 class Aspirasi extends BaseController
 {
     protected $model;
+    protected $googlemaps;
 
     public function __construct()
     {
         $this->model = new Model_app();
         helper(['form', 'text']);
-        // kalau ada library custom kayak googlemaps, harus bikin service/helper di CI4
+        $this->googlemaps = new Googlemaps(); 
     }
 
     public function index()
@@ -44,17 +46,36 @@ class Aspirasi extends BaseController
 
     public function input()
     {
-        // Catatan: googlemaps library CI3 harus di-porting ke CI4 dulu
+        $confmap = [
+            'center' => '-6.99926531, 109.13596825',
+            'zoom' => 10,
+            'map_height' => 400,
+            'map_type' => 'HYBRID',
+            'onload' => 'ControlLokasi();',
+            'onclick' => 'updateKoordinat(event.latLng.lat(), event.latLng.lng());setMapOnAll(map);clearMarker(); createMarker_map({ map: map, position:event.latLng });',
+            'places' => TRUE,
+            'placesAutocompleteInputID' => 'cari',
+            'placesAutocompleteBoundsMap' => TRUE,
+            'placesAutocompleteOnChange' => 'PlacesLokasi();',
+        ];
+
+        // inisialisasi googlemaps (pastikan sudah di-porting ke CI4 sebagai service/library)
+        $this->googlemaps->initialize($confmap);
+
+        // hasil create_map
+        $peta = $this->googlemaps->create_map();
+
         $data = [
-            'title'         => 'Aspirasi Masyarakat Perencanaan Pemasangan Lampu PJU',
-            'aktif_aspirasi'=> 'active',
-            'peta'          => '' // nanti isi dari service googlemaps custom
+            'title'          => 'Aspirasi Masyarakat Perencanaan Pemasangan Lampu PJU',
+            'aktif_aspirasi' => 'active',
+            'peta'           => $peta, 
         ];
 
         return view('home/pages/v_header', $data)
-             . view('home/aspirasi/v_input_aspirasi')
-             . view('home/pages/v_footer');
+            . view('home/aspirasi/v_input_aspirasi')
+            . view('home/pages/v_footer');
     }
+
 
     public function proses_aspirasi()
     {

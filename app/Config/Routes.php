@@ -20,14 +20,14 @@ $routes->get('auth/logout', 'Auth::logout');
 $routes->get('kontak', 'Kontak::index');
 
 $routes->get('pengaduan', 'Pengaduan::index');
-$routes->post('pengaduan/kirim', 'Pengaduan::kirim');
+$routes->post('pengaduan/input', 'Pengaduan::input');
 $routes->get('pengaduan/(:num)', 'Pengaduan::detail/$1');
 $routes->get('pengaduan/(:num)/survey/(:num)', 'Pengaduan::survey/$1/$2');
 
-$routes->get('aspirasi', 'Aspirasi::index');
-$routes->post('aspirasi/kirim', 'Aspirasi::kirim');
-$routes->get('aspirasi/(:num)', 'Aspirasi::detail/$1');
-$routes->get('aspirasi/(:num)/survey/(:num)', 'Aspirasi::survey/$1/$2');
+// Halaman aspirasi
+$routes->get('aspirasi', 'Aspirasi::index');         
+$routes->get('aspirasi/input', 'Aspirasi::input');   
+$routes->post('aspirasi/proses', 'Aspirasi::proses_aspirasi'); 
 
 $routes->get('peta', 'Peta::index');
 

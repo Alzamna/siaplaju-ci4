@@ -18,7 +18,7 @@
 		<article class="row margin-top-10">
 			<div class="col-md-7">
 				<form action="<?php echo site_url('pengaduan/proses_input_pengaduan');?>" method="post" enctype="multipart/form-data">
-					<input type="hidden" name="<?php echo $this->security->get_csrf_token_name(); ?>" value="<?php echo $this->security->get_csrf_hash(); ?>">
+					<?= csrf_field() ?>
 					<fieldset>
 						<div class="row">
 							<div class="form-group">

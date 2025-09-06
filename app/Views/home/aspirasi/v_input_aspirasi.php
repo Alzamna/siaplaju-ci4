@@ -1,4 +1,8 @@
-<?php echo $this->session->flashdata('sukses');?>
+<?php if (session()->getFlashdata('sukses')): ?>
+    <div class="alert alert-success">
+        <?= session()->getFlashdata('sukses') ?>
+    </div>
+<?php endif; ?>
 <section class="page-header page-header-xs">
 	<div class="container">
 		<h1>ASPIRASI MASYARAKAT</h1>
@@ -28,7 +32,7 @@
 		<article class="row margin-top-10">
 			<div class="col-md-7">
 				<form action="<?php echo site_url('aspirasi/proses_aspirasi');?>" method="post" enctype="multipart/form-data">
-					<input type="hidden" name="<?php echo $this->security->get_csrf_token_name(); ?>" value="<?php echo $this->security->get_csrf_hash(); ?>">
+					<?= csrf_field() ?>
 					<fieldset>
 						<div class="row">
 							<div class="form-group">
