@@ -20,9 +20,11 @@ $routes->get('auth/logout', 'Auth::logout');
 $routes->get('kontak', 'Kontak::index');
 
 $routes->get('pengaduan', 'Pengaduan::index');
-$routes->post('pengaduan/input', 'Pengaduan::input');
-$routes->get('pengaduan/(:num)', 'Pengaduan::detail/$1');
-$routes->get('pengaduan/(:num)/survey/(:num)', 'Pengaduan::survey/$1/$2');
+$routes->get('pengaduan/input', 'Pengaduan::input');
+$routes->post('pengaduan/proses_input_pengaduan', 'Pengaduan::proses_input_pengaduan');
+$routes->get('pengaduan/lihat/(:segment)', 'Pengaduan::lihat/$1');
+
+
 
 // Halaman aspirasi
 $routes->get('aspirasi', 'Aspirasi::index');         

@@ -1,3 +1,8 @@
+<?php if (session()->getFlashdata('sukses')): ?>
+    <div class="alert alert-success">
+        <?= session()->getFlashdata('sukses') ?>
+    </div>
+<?php endif; ?>
 <section class="page-header page-header-xs">
 	<div class="container">
 		<h1>FORMULIR PENGADUAN LAMPU PJU</h1>

@@ -57,15 +57,16 @@ class Pengaduan extends BaseController
     }
 
 	
-	public function input(){
-		$data=array(
-			'title'=>'Input Pengaduan Lampu Penerangan Jalan Umum',
-			'pengaduan'=>'active',
-			'aktif_pengaduan'=>'active',
-		);
-		return view('home/pages/v_header',$data);
-		return view('home/pengaduan/v_pengaduan_input');
-		return view('home/pages/v_footer');
+		public function input(){
+			$data = [
+			'title'           => 'Input Pengaduan Lampu Penerangan Jalan Umum',
+			'pengaduan'       => 'active',
+			'aktif_pengaduan' => 'active',
+		];
+
+		return view('home/pages/v_header', $data)
+			. view('home/pengaduan/v_pengaduan_input', $data)
+			. view('home/pages/v_footer');
 	}
 	
 	public function proses_input_pengaduan(){
@@ -114,14 +115,16 @@ class Pengaduan extends BaseController
 			);
 			$this->upload->initialize($config);
 			if(!$this->upload->do_upload($foto)){
-				$data=array(
-					'title'=>'Input Pengaduan Lampu Penerangan Jalan Umum',
-					'aktif_pengaduan'=>'active',
-					'error'=> $this->upload->display_errors(),
-				);
-				return view('home/pages/v_header',$data);
-				return view('home/pengaduan/v_pengaduan_input');
-				return view('home/pages/v_footer');
+			$data = [
+				'title'           => 'Input Pengaduan Lampu Penerangan Jalan Umum',
+				'aktif_pengaduan' => 'active',
+				'error'           => $this->upload->display_errors(),
+			];
+
+			return view('home/pages/v_header', $data)
+				. view('home/pengaduan/v_pengaduan_input', $data)
+				. view('home/pages/v_footer');
+
 			} else {
 				$upload = $this->upload->data();
 				$data=array(
