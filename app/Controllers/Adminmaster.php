@@ -1,15 +1,19 @@
 <?php 
-defined('BASEPATH') OR exit('No direct script access allowed');
+namespace App\Controllers;
 
-class Adminmaster extends CI_Controller {
-	function __construct(){
-		parent::__construct();
-		$this->load->model('model_backend','model');
-		$this->load->library('pagination');
-		$this->load->helper('date');
-		if($this->session->userdata('login') != 1 ){
-            redirect('login');
-        };
+use App\Models\Model_backend;   // model yang kamu pakai
+use CodeIgniter\Controller;
+
+class Adminmaster extends BaseController{
+	protected $model;
+	protected $pager;
+	protected $session;
+
+	public function __construct()
+	{
+		$this->model = new Model_backend();
+		$this->session = \Config\Services::session();
+		helper('date'); // load helper
 	}
 	
 	public function admin(){
@@ -17,44 +21,44 @@ class Adminmaster extends CI_Controller {
 			'title'=>'Admin Sipelaju',
 			'open_master'=>'open',
 			'master_admin'=>'active',
-			'dt_user'=>$this->model_app->getAllAdmin(),
-			'dt_akses'=>$this->model_app->getAllData('tbl_akses'),
+			'dt_user'=>$this->model->getAllAdmin(),
+			'dt_akses'=>$this->model->getAllData('tbl_akses'),
 		);
-		$this->load->view('pages/v_header',$data);
-		$this->load->view('master/v_master_admin');
-		$this->load->view('pages/v_footer');
+		return view('pages/v_header',$data);
+		return view('master/v_master_admin');
+		return view('pages/v_footer');
 	}
 	
 	public function proses_tambah_admin(){
 		$user=array(
-			'id_akses'=>$this->input->post('akses'),
-			'nama'=>$this->input->post('nama'),
-			'alamat'=>$this->input->post('alamat'),
-			'telp'=>$this->input->post('telp'),
-			'username'=>$this->input->post('username'),
-			'password'=>$this->bcrypt->hash_password($this->input->post('password')),
+			'id_akses'=>$this->request->getPost('akses'),
+			'nama'=>$this->request->getPost('nama'),
+			'alamat'=>$this->request->getPost('alamat'),
+			'telp'=>$this->request->getPost('telp'),
+			'username'=>$this->request->getPost('username'),
+			'password' => password_hash($this->request->getPost('password'), PASSWORD_BCRYPT),
 		);
-		$this->model_app->insertData('tbl_user',$user);
+		$this->model->insertData('tbl_user',$user);
 		redirect('adminmaster/admin');
 	}
 	
 	public function proses_edit_admin(){
-		$id['id_user'] = $this->uri->segment(3);
+		$id['id_user'] = $this->request->getUri()->getSegment(3);
 		$user=array(
-			'id_akses'=>$this->input->post('akses'),
-			'nama'=>$this->input->post('nama'),
-			'alamat'=>$this->input->post('alamat'),
-			'telp'=>$this->input->post('telp'),
-			'username'=>$this->input->post('username'),
-			'password'=>$this->bcrypt->hash_password($this->input->post('password')),
+			'id_akses'=>$this->request->getPost('akses'),
+			'nama'=>$this->request->getPost('nama'),
+			'alamat'=>$this->request->getPost('alamat'),
+			'telp'=>$this->request->getPost('telp'),
+			'username'=>$this->request->getPost('username'),
+			'password' => password_hash($this->request->getPost('password'), PASSWORD_BCRYPT),
 		);
-		$this->model_app->updateData('tbl_user',$user,$id);
+		$this->model->updateData('tbl_user',$user,$id);
 		redirect('adminmaster/admin');
 	}
 	
 	public function hapus_user(){
-		$id['id_user'] = $this->uri->segment(3);
-        $this->model_app->deleteData('tbl_user',$id);
+		$id['id_user'] = $this->request->getUri()->getSegment(3);
+        $this->model->deleteData('tbl_user',$id);
         redirect('master/admin');
 	}
 	
@@ -63,33 +67,33 @@ class Adminmaster extends CI_Controller {
 			'title'=>'Data rayon',
 			'open_master'=>'open',
 			'master_rayon'=>'active',
-			'dt_rayon'=>$this->model_app->getAllData('tbl_rayon'),
+			'dt_rayon'=>$this->model->getAllData('tbl_rayon'),
 		);
-		$this->load->view('pages/v_header',$data);
-		$this->load->view('master/v_master_rayon');
-		$this->load->view('pages/v_footer');
+		return view('pages/v_header',$data);
+		return view('master/v_master_rayon');
+		return view('pages/v_footer');
 	}
 	
 	public function proses_tambah_rayon(){
 		$data=array(
-			'nama_rayon'=>$this->input->post('nama_rayon'),
+			'nama_rayon'=>$this->request->getPost('nama_rayon'),
 		);
-		$this->model_app->insertData('tbl_rayon',$data);
+		$this->model->insertData('tbl_rayon',$data);
 		redirect('adminmaster/rayon');
 	}
 	
 	public function proses_edit_rayon(){
-		$id['id_rayon'] = $this->uri->segment(3);
+		$id['id_rayon'] = $this->request->getUri()->getSegment(3);
 		$data=array(
-			'nama_rayon'=>$this->input->post('nama_rayon'),
+			'nama_rayon'=>$this->request->getPost('nama_rayon'),
 		);
-		$this->model_app->updateData('tbl_rayon',$data,$id);
+		$this->model->updateData('tbl_rayon',$data,$id);
 		redirect('adminmaster/rayon');
 	}
 	
 	public function hapus_rayon(){
-		$id['id_rayon'] = $this->uri->segment(3);
-        $this->model_app->deleteData('tbl_rayon',$id);
+		$id['id_rayon'] = $this->request->getUri()->getSegment(3);
+        $this->model->deleteData('tbl_rayon',$id);
         redirect('adminmaster/rayon');
 	}
 	
@@ -98,49 +102,49 @@ class Adminmaster extends CI_Controller {
 			'title'=>'Data Kecamatan',
 			'open_master'=>'open',
 			'master_kecamatan'=>'active',
-			'dt_kecamatan'=>$this->model_app->getAllKecamatan(),
-			'dt_rayon'=>$this->model_app->getAllData('tbl_rayon'),
+			'dt_kecamatan'=>$this->model->getAllKecamatan(),
+			'dt_rayon'=>$this->model->getAllData('tbl_rayon'),
 		);
-		$this->load->view('pages/v_header',$data);
-		$this->load->view('master/v_master_kecamatan');
-		$this->load->view('pages/v_footer');
+		return view('pages/v_header',$data);
+		return view('master/v_master_kecamatan');
+		return view('pages/v_footer');
 	}
 	
 	public function proses_tambah_kecamatan(){
 		$data=array(
-			'nama_kecamatan'=>$this->input->post('nama_kecamatan'),
-			'id_rayon'=>$this->input->post('rayon'),
+			'nama_kecamatan'=>$this->request->getPost('nama_kecamatan'),
+			'id_rayon'=>$this->request->getPost('rayon'),
 		);
-		$this->model_app->insertData('tbl_kecamatan',$data);
+		$this->model->insertData('tbl_kecamatan',$data);
 		redirect('adminmaster/kecamatan');
 	}
 	
 	public function proses_edit_kecamatan(){
-		$id['id_kecamatan'] = $this->uri->segment(3);
+		$id['id_kecamatan'] = $this->request->getUri()->getSegment(3);
 		$data=array(
-			'nama_kecamatan'=>$this->input->post('nama_kecamatan'),
-			'id_rayon'=>$this->input->post('rayon'),
+			'nama_kecamatan'=>$this->request->getPost('nama_kecamatan'),
+			'id_rayon'=>$this->request->getPost('rayon'),
 		);
-		$this->model_app->updateData('tbl_kecamatan',$data,$id);
+		$this->model->updateData('tbl_kecamatan',$data,$id);
 		redirect('adminmaster/kecamatan');
 	}
 	
 	public function hapus_kecamatan(){
-		$id['id_kecamatan'] = $this->uri->segment(3);
-        $this->model_app->deleteData('tbl_kecamatan',$id);
+		$id['id_kecamatan'] = $this->request->getUri()->getSegment(3);
+        $this->model->deleteData('tbl_kecamatan',$id);
         redirect('adminmaster/kecamatan');
 	}
 	
 	public function jalan(){
-		if($this->uri->segment(3)==FALSE){
+		if($this->request->getUri()->getSegment(3)==FALSE){
 			$dari = 0;
 		} else {
-			$dari = $this->uri->segment(3);
+			$dari = $this->request->getUri()->getSegment(3);
 		};
 
 		$num = $this->model->getJmlJalan();
 		$config=array(
-			'base_url'=>base_url().$this->router->fetch_class().'/'.$this->router->fetch_method(),
+			'base_url' => base_url() . service('router')->controllerName() . '/' . service('router')->methodName(),
 			'total_rows'=>$num,
 			'per_page'=>20,
 			'full_tag_open'=> "<ul class='pagination'>",
@@ -163,42 +167,43 @@ class Adminmaster extends CI_Controller {
 			'title'=>'Data Jalan Kabupaten Tegal',
 			'open_master'=>'open',
 			'master_jalan'=>'active',
-			'dt_jalan'=>$this->model_app->getAllJalan($config['per_page'],$dari),
-			'dt_kecamatan'=>$this->model_app->getAllData('tbl_kecamatan'),
+			'dt_jalan'=>$this->model->getAllJalan($config['per_page'],$dari),
+			'dt_kecamatan'=>$this->model->getAllData('tbl_kecamatan'),
 			'start'=>$dari,
 		);
-		$this->pagination->initialize($config);
-		$this->load->view('pages/v_header',$data);
-		$this->load->view('master/v_master_jalan');
-		$this->load->view('pages/v_footer');
+		$data['dt_jalan'] = $this->model->paginate(20);
+		$data['pager'] = $this->model->pager;
+		return view('pages/v_header',$data);
+		return view('master/v_master_jalan');
+		return view('pages/v_footer');
 	}
 	
 	public function proses_tambah_jalan(){
 		$data=array(
-			'nama_jalan'=>$this->input->post('nama_jalan'),
-			'id_kecamatan'=>$this->input->post('kecamatan'),
-			'status_jalan'=>$this->input->post('status_jalan'),
-			'panjang_jalan'=>$this->input->post('panjang_jalan'),
+			'nama_jalan'=>$this->request->getPost('nama_jalan'),
+			'id_kecamatan'=>$this->request->getPost('kecamatan'),
+			'status_jalan'=>$this->request->getPost('status_jalan'),
+			'panjang_jalan'=>$this->request->getPost('panjang_jalan'),
 		);
-		$this->model_app->insertData('tbl_jalan',$data);
+		$this->model->insertData('tbl_jalan',$data);
 		redirect('adminmaster/jalan');
 	}
 	
 	public function proses_edit_jalan(){
-		$id['id_jalan'] = $this->uri->segment(3);
+		$id['id_jalan'] = $this->request->getUri()->getSegment(3);
 		$data=array(
-			'nama_jalan'=>$this->input->post('nama_jalan'),
-			'id_kecamatan'=>$this->input->post('kecamatan'),
-			'status_jalan'=>$this->input->post('status_jalan'),
-			'panjang_jalan'=>$this->input->post('panjang_jalan'),
+			'nama_jalan'=>$this->request->getPost('nama_jalan'),
+			'id_kecamatan'=>$this->request->getPost('kecamatan'),
+			'status_jalan'=>$this->request->getPost('status_jalan'),
+			'panjang_jalan'=>$this->request->getPost('panjang_jalan'),
 		);
-		$this->model_app->updateData('tbl_jalan',$data,$id);
+		$this->model->updateData('tbl_jalan',$data,$id);
 		redirect('adminmaster/jalan');
 	}
 	
 	public function hapus_jalan(){
-		$id['id_jalan'] = $this->uri->segment(3);
-        $this->model_app->deleteData('tbl_jalan',$id);
+		$id['id_jalan'] = $this->request->getUri()->getSegment(3);
+        $this->model->deleteData('tbl_jalan',$id);
         redirect('adminmaster/jalan');
 	}
 }

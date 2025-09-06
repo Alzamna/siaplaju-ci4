@@ -1,4 +1,6 @@
-<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+<?php 
+namespace App\Libraries;
+
 
 /**
  * CodeIgniter Google Maps API V3 Class
