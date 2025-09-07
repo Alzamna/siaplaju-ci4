@@ -235,7 +235,6 @@ class Adminpengaduan extends BaseController
 		$this->model->updateData('tbl_pengaduan',$data,$idx);
 		$this->model->insertData('tbl_tindakan',$tindakan);
 		$this->model->insertData('tbl_pengaduan_status',$status);
-		//$this->kirimsurvey($id,$nama,$telp);
 		return redirect()->to('adminpengaduan');
 	}
 	
