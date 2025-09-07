@@ -88,9 +88,9 @@ class Login extends BaseController
                         'username'  => $row->username,
                         'nama'      => $row->nama,
                         'status'    => $row->akses,
-                        'login'     => 1
+                        'login'     => true,
                     ];
-                    $this->set_session($session_data);
+                    $this->session->set($session_data);
 
                     return 'login_sukses';
                 } else {
@@ -101,6 +101,14 @@ class Login extends BaseController
             }
         } else {
             return 'akun_tidak_ditemukan';
+        }
+    }
+
+        protected function isLoggedIn()
+    {
+        if (!$this->session->get('login')) {
+            // Redirect jika belum login
+            return redirect()->to(site_url('login'))->with('error', 'Silahkan login terlebih dahulu')->send();
         }
     }
 

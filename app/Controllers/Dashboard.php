@@ -14,6 +14,8 @@ class Dashboard extends BaseController
 
     public function index()
     {
+        $this->isLoggedIn();
+
         $data = [
             'title'            => 'Dashboard SIAPLAJU',
             'open_dashboard'   => 'open',

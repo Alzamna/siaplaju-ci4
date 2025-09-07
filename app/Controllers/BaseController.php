@@ -46,13 +46,30 @@ abstract class BaseController extends Controller
     /**
      * @return void
      */
+
+    protected $session;
+
+    public function __construct()
+    {
+        $this->session = session();
+    }
+
     public function initController(RequestInterface $request, ResponseInterface $response, LoggerInterface $logger)
     {
-        // Do Not Edit This Line
+        // Jangan edit ini
         parent::initController($request, $response, $logger);
 
-        // Preload any models, libraries, etc, here.
+        // Inisialisasi session di sini
+        $this->session = \Config\Services::session();
 
-        // E.g.: $this->session = service('session');
+        // Preload models, libraries, dll jika perlu
+    }
+
+    protected function isLoggedIn()
+    {
+        if (!$this->session->get('login')) {
+            // Redirect ke login jika belum login
+            return redirect()->to(site_url('login'))->with('error', 'Silahkan login terlebih dahulu')->send();
+        }
     }
 }

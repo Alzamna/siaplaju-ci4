@@ -36,11 +36,13 @@ $routes->get('peta', 'Peta::index');
 // Dashboard
 // -------------------
 $routes->get('dashboard', 'Dashboard::index');
+$routes->get('profil', 'Dashboard::profil');
+$routes->get('setting', 'Dashboard::setting');
 
 // Login & Auth
-$routes->get('login', 'Login::index');    // tampilkan login (GET)
-$routes->post('login', 'Login::index');   // proses login (POST)
-$routes->get('logout', 'Login::logout'); 
+$routes->get('login', 'Login::index');    
+$routes->post('login', 'Login::index');   
+$routes->get('login/logout', 'Login::logout'); 
 
 // Admin Master
 $routes->group('adminmaster', function($routes) {
