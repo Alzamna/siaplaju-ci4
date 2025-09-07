@@ -108,15 +108,54 @@ $routes->post('adminpju/get_jalan', 'Adminpju::get_jalan');
 
 // Admin Rekap
 $routes->group('adminrekap', function($routes) {
-    $routes->get('/', 'Adminrekap::index');
-    $routes->get('export', 'Adminrekap::export'); // asumsi ada fitur export excel
+    // Halaman rekap PJU
+    $routes->get('pju', 'Adminrekap::pju');
+    $routes->post('fpju', 'Adminrekap::fpju'); // filter rekap PJU
+    $routes->post('export_pju', 'Adminrekap::export_pju'); // export Excel rekap PJU
+
+    // Halaman rekap Pengaduan
+    $routes->get('pengaduan', 'Adminrekap::pengaduan');
+    $routes->post('fpengaduan', 'Adminrekap::fpengaduan'); // filter rekap Pengaduan
+    $routes->post('export_pengaduan', 'Adminrekap::export_pengaduan'); // export Excel Pengaduan
 });
+
 
 // Admin Pengaduan
 $routes->group('adminpengaduan', function($routes) {
+    // Dashboard / list pengaduan
     $routes->get('/', 'Adminpengaduan::index');
+
+    // Tambah pengaduan
+    $routes->get('tambah', 'Adminpengaduan::tambah');
     $routes->post('tambah', 'Adminpengaduan::proses_tambah');
+
+    // Edit pengaduan
+    $routes->get('edit/(:num)', 'Adminpengaduan::edit/$1');
     $routes->post('edit/(:num)', 'Adminpengaduan::proses_edit/$1');
+
+    // Hapus pengaduan
     $routes->get('hapus/(:num)', 'Adminpengaduan::hapus/$1');
+
+    // Tolak pengaduan
     $routes->get('tolak/(:num)', 'Adminpengaduan::tolak/$1');
+
+    // Verifikasi pengaduan
+    $routes->get('verifikasi/(:num)', 'Adminpengaduan::verifikasi/$1');
+    $routes->post('verifikasi/(:num)', 'Adminpengaduan::proses_verifikasi/$1');
+
+    // Proses pengaduan (status 3)
+    $routes->post('proses_pengaduan/(:num)', 'Adminpengaduan::proses_pengaduan/$1');
+
+    // Input perbaikan
+    $routes->get('inputperbaikan/(:num)', 'Adminpengaduan::inputperbaikan/$1');
+    $routes->post('inputperbaikan/(:num)', 'Adminpengaduan::proses_perbaikan/$1');
+
+    // Lihat pengaduan
+    $routes->get('lihat/(:num)', 'Adminpengaduan::lihat/$1');
+
+    // Peta pengaduan
+    $routes->get('peta', 'Adminpengaduan::peta');
+
+    // Cari pengaduan
+    $routes->post('cari', 'Adminpengaduan::cari');
 });

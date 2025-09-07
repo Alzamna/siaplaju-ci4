@@ -12,7 +12,7 @@
 			</div>
 			<div class="block-content">		
 			<form role="form" action="<?php echo site_url('adminrekap/fpengaduan');?>" method="post">
-				<input type="hidden" name="<?php echo $this->security->get_csrf_token_name(); ?>" value="<?php echo $this->security->get_csrf_hash(); ?>">
+				<?= csrf_field() ?>
 				<div class="row">
 					<div class="col-sm-4">
 						<div class="form-group row">

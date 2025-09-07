@@ -13,7 +13,7 @@
 			</div>
 			<div class="block-content">
 				<form action="<?php echo site_url('adminpengaduan/proses_tambah');?>" method="post" enctype="multipart/form-data">
-					<input type="hidden" name="<?php echo $this->security->get_csrf_token_name(); ?>" value="<?php echo $this->security->get_csrf_hash(); ?>">
+					<?= csrf_field() ?>
 					<div class="row">
                         <div class="col-sm-6">														
 							<div class="form-group row">
@@ -66,7 +66,7 @@
 							<div class="form-group row">
 								<label class="col-lg-4 col-form-label" for="nama">Pelapor</label>
 								<div class="col-lg-8">
-									<input type="text" class="form-control" id="nama" name="nama" value="<?php echo $this->session->userdata('nama');?>">
+								<input type="text" class="form-control" id="nama" name="nama" value="<?= session()->get('nama'); ?>">
 								</div>
 							</div>
 							

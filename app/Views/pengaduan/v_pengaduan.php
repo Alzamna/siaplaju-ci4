@@ -14,8 +14,8 @@
 				<div class="row">
 					<div class="col-lg-5">
 						<form action="<?php echo site_url('adminpengaduan/cari');?>" method="post">
-							<input type="hidden" name="<?php echo $this->security->get_csrf_token_name(); ?>" value="<?php echo $this->security->get_csrf_hash(); ?>">
-							<div class="form-group row">
+			<?= csrf_field() ?>			
+						<div class="form-group row">
 								<div class="col-lg-12">
 									<div class="input-group">
 										<input type="search" class="form-control" id="cari" name="cari" placeholder="Masukan kode pengaduan atau nama pelapor" required="">
@@ -126,7 +126,7 @@
 					</table>
 					
 					<nav aria-label="Page navigation">
-						<?php echo $this->pagination->create_links();?>
+						<?= $pager ?>
 					</nav>
 				</div>
 			</div>
@@ -141,8 +141,8 @@
 	<div class="modal-dialog modal-lg modal-dialog-popout" role="document">
 		<div class="modal-content">
 		<form action="<?php echo site_url('adminpengaduan/proses_pengaduan/'.$row->id_pengaduan);?>" method="post">
-			<input type="hidden" name="<?php echo $this->security->get_csrf_token_name(); ?>" value="<?php echo $this->security->get_csrf_hash(); ?>">
-			<div class="block block-themed block-transparent mb-0">
+		<?= csrf_field() ?>	
+		<div class="block block-themed block-transparent mb-0">
 				<div class="block-header">
 					<h3 class="block-title">Proses Pengaduan</h3>
 					<div class="block-options">
@@ -182,8 +182,8 @@
 	<div class="modal-dialog modal-lg modal-dialog-popout" role="document">
 		<div class="modal-content">
 		<form action="<?php echo site_url('adminpengaduan/tolak/'.$row->id_pengaduan);?>" method="post">
-			<input type="hidden" name="<?php echo $this->security->get_csrf_token_name(); ?>" value="<?php echo $this->security->get_csrf_hash(); ?>">
-			<div class="block block-themed block-transparent mb-0">
+		<?= csrf_field() ?>	
+		<div class="block block-themed block-transparent mb-0">
 				<div class="block-header">
 					<h3 class="block-title">Tolak Pengaduan</h3>
 					<div class="block-options">

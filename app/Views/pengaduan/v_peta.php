@@ -32,7 +32,7 @@
 					</div>
 					<div class="block-content">		
 					<form role="form" action="<?php echo site_url('adminpengaduan/fpeta');?>" method="post">
-						<input type="hidden" name="<?php echo $this->security->get_csrf_token_name(); ?>" value="<?php echo $this->security->get_csrf_hash(); ?>">
+						<?= csrf_field() ?>
 						<div class="form-group row">
 							<label class="col-lg-3 col-form-label" for="kecamatan">Kecamatan</label>
 							<div class="col-lg-9">

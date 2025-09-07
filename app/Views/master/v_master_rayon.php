@@ -59,7 +59,7 @@
 	<div class="modal-dialog modal-dialog-popout" role="document">
 		<div class="modal-content">
 		<form action="<?php echo site_url('adminmaster/proses_tambah_rayon');?>" method="post">
-			<input type="hidden" name="<?php echo $this->security->get_csrf_token_name(); ?>" value="<?php echo $this->security->get_csrf_hash(); ?>">
+			<?= csrf_field() ?>
 			<div class="block block-themed block-transparent mb-0">
 				<div class="block-header">
 					<h3 class="block-title">Tambah Rayon</h3>
@@ -96,7 +96,7 @@
 	<div class="modal-dialog modal-dialog-popout" role="document">
 		<div class="modal-content">
 		<form action="<?php echo site_url('adminmaster/proses_edit_rayon/'.$row->id_rayon);?>" method="post">
-			<input type="hidden" name="<?php echo $this->security->get_csrf_token_name(); ?>" value="<?php echo $this->security->get_csrf_hash(); ?>">
+			<?= csrf_field() ?>
 			<div class="block block-themed block-transparent mb-0">
 				<div class="block-header">
 					<h3 class="block-title">Edit Rayon</h3>

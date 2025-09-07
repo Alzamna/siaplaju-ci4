@@ -41,10 +41,12 @@ class Adminrekap extends BaseController
 			'open_rekap'=>'open',
 			'rekap_pju'=>'active',
 			'dt_kecamatan'=>$this->model->getAllKecamatan(),
+			'dt_jenis' => $this->model->getAllJenisLampu(),
+			'dt_kondisi' => $this->model->getAllKondisiLampu(), // <-- tambahkan ini
 		);
-		return view('pages/v_header',$data);
-		return view('rekap/v_rekap_pju');
-		return view('pages/v_footer');
+		echo view('pages/v_header',$data);
+		echo view('rekap/v_rekap_pju');
+		echo view('pages/v_footer');
 	}
 	
 	public function fpju(){
@@ -80,9 +82,9 @@ class Adminrekap extends BaseController
 			'dt_rekap'=>$this->model->getFilterRekapPju($kec,$jln,$jns,$kds),
 			'export'=>'?kec='.$kec.'&jln='.$jln.'&jns='.$jns.'&kds='.$kds,
 		);
-		return view('pages/v_header',$data);
-		return view('rekap/v_rekap_pju');
-		return view('pages/v_footer');
+		echo view('pages/v_header',$data);
+		echo view('rekap/v_rekap_pju');
+		echo view('pages/v_footer');
 	}
 	
 	public function export_pju(){
@@ -204,9 +206,9 @@ class Adminrekap extends BaseController
 			'rekap_pengaduan'=>'active',
 			'dt_kecamatan'=>$this->model->getAllKecamatan(),
 		);
-		return view('pages/v_header',$data);
-		return view('rekap/v_rekap_pengaduan');
-		return view('pages/v_footer');
+		echo view('pages/v_header',$data);
+		echo view('rekap/v_rekap_pengaduan');
+		echo view('pages/v_footer');
 	}
 	
 	public function fpengaduan(){
@@ -245,9 +247,9 @@ class Adminrekap extends BaseController
 			'dt_rekap'=>$this->model->getFilterRekapPengaduan($kec,$jln,$mda,$sts,$tgl_awal,$tgl_akhir),
 			'export'=>'?kec='.$kec.'&jln='.$jln.'&mda='.$mda.'&sts='.$sts.'&awal='.$tgl_awal.'&akhir='.$tgl_akhir,
 		);
-		return view('pages/v_header',$data);
-		return view('rekap/v_rekap_pengaduan');
-		return view('pages/v_footer');
+		echo view('pages/v_header',$data);
+		echo view('rekap/v_rekap_pengaduan');
+		echo view('pages/v_footer');
 	}
 	
 	public function export_pengaduan(){

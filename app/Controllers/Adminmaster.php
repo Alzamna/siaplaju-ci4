@@ -24,9 +24,9 @@ class Adminmaster extends BaseController{
 			'dt_user'=>$this->model->getAllAdmin(),
 			'dt_akses'=>$this->model->getAllData('tbl_akses'),
 		);
-		return view('pages/v_header',$data);
-		return view('master/v_master_admin');
-		return view('pages/v_footer');
+		echo view('pages/v_header',$data);
+		echo view('master/v_master_admin');
+		echo view('pages/v_footer');
 	}
 	
 	public function proses_tambah_admin(){
@@ -69,9 +69,9 @@ class Adminmaster extends BaseController{
 			'master_rayon'=>'active',
 			'dt_rayon'=>$this->model->getAllData('tbl_rayon'),
 		);
-		return view('pages/v_header',$data);
-		return view('master/v_master_rayon');
-		return view('pages/v_footer');
+		echo view('pages/v_header',$data);
+		echo view('master/v_master_rayon');
+		echo view('pages/v_footer');
 	}
 	
 	public function proses_tambah_rayon(){
@@ -105,9 +105,9 @@ class Adminmaster extends BaseController{
 			'dt_kecamatan'=>$this->model->getAllKecamatan(),
 			'dt_rayon'=>$this->model->getAllData('tbl_rayon'),
 		);
-		return view('pages/v_header',$data);
-		return view('master/v_master_kecamatan');
-		return view('pages/v_footer');
+		echo view('pages/v_header',$data);
+		echo view('master/v_master_kecamatan');
+		echo view('pages/v_footer');
 	}
 	
 	public function proses_tambah_kecamatan(){
@@ -135,48 +135,33 @@ class Adminmaster extends BaseController{
         redirect('adminmaster/kecamatan');
 	}
 	
-	public function jalan(){
-		if($this->request->getUri()->getSegment(3)==FALSE){
-			$dari = 0;
-		} else {
-			$dari = $this->request->getUri()->getSegment(3);
-		};
+	public function jalan()
+	{
+		$page = $this->request->getVar('page') ?? 1;
+		$perPage = 20;
+		$dari = ($page - 1) * $perPage;
 
-		$num = $this->model->getJmlJalan();
-		$config=array(
-			'base_url' => base_url() . service('router')->controllerName() . '/' . service('router')->methodName(),
-			'total_rows'=>$num,
-			'per_page'=>20,
-			'full_tag_open'=> "<ul class='pagination'>",
-			'full_tag_close'=> "</ul>",
-			'num_tag_open' => "<li class='page-item'><a class='page-link'",
-			'num_tag_close' => '</li>',
-			'cur_tag_open' => "<li class='page-item active'><a class='page-link' href='#'>",
-			'cur_tag_close' => "<span class='sr-only'></span></a></li>",
-			'next_tag_open' => "<li class='page-item'><a class='page-link'",
-			'next_tagl_close' => "</li>",
-			'prev_tag_open' => "<li class='page-item'><a class='page-link'",
-			'prev_tagl_close' => "</li>",
-			'first_tag_open' => "<li class='page-item'><a class='page-link'",
-			'first_tagl_close' => "</li>",
-			'last_tag_open' => "<li class='page-item'><a class='page-link'",
-			'last_tagl_close' => "</li>"
-		);
-		
-		$data=array(
-			'title'=>'Data Jalan Kabupaten Tegal',
-			'open_master'=>'open',
-			'master_jalan'=>'active',
-			'dt_jalan'=>$this->model->getAllJalan($config['per_page'],$dari),
-			'dt_kecamatan'=>$this->model->getAllData('tbl_kecamatan'),
-			'start'=>$dari,
-		);
-		$data['dt_jalan'] = $this->model->paginate(20);
-		$data['pager'] = $this->model->pager;
-		return view('pages/v_header',$data);
-		return view('master/v_master_jalan');
-		return view('pages/v_footer');
+		$num = $this->model->getJmlJalan(); // total rows
+		$dt_jalan = $this->model->getAllJalan($perPage, $dari);
+
+		$pager = \Config\Services::pager();
+		$pager->makeLinks($page, $perPage, $num); // bikin link manual
+
+		$data = [
+			'title' => 'Data Jalan Kabupaten Tegal',
+			'open_master' => 'open',
+			'master_jalan' => 'active',
+			'dt_jalan' => $dt_jalan,
+			'dt_kecamatan' => $this->model->getAllKecamatan(),
+			'start' => $dari,
+			'pager' => $pager
+		];
+
+		echo view('pages/v_header', $data);
+		echo view('master/v_master_jalan', $data);
+		echo view('pages/v_footer');
 	}
+
 	
 	public function proses_tambah_jalan(){
 		$data=array(

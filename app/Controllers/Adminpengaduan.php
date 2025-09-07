@@ -31,45 +31,39 @@ class Adminpengaduan extends BaseController
         }
 	}
 	
-	public function index(){
-		if($this->request->getUri()->getSegment(3)==FALSE){
-			$dari = 0;
-		} else {
-			$dari = $this->request->getUri()->getSegment(3);
-		};
+	public function index()
+	{
+		$perPage = 20; 
 
-		$num = $this->model->getJmlPengaduan();
-		$config=array(
-			'base_url' => base_url() . service('router')->controllerName() . '/' . service('router')->methodName(),
-			'total_rows'=>$num,
-			'per_page'=>20,
-			'full_tag_open'=> "<ul class='pagination'>",
-			'full_tag_close'=> "</ul>",
-			'num_tag_open' => "<li class='page-item'><a class='page-link'",
-			'num_tag_close' => '</li>',
-			'cur_tag_open' => "<li class='page-item active'><a class='page-link' href='#'>",
-			'cur_tag_close' => "<span class='sr-only'></span></a></li>",
-			'next_tag_open' => "<li class='page-item'><a class='page-link'",
-			'next_tagl_close' => "</li>",
-			'prev_tag_open' => "<li class='page-item'><a class='page-link'",
-			'prev_tagl_close' => "</li>",
-			'first_tag_open' => "<li class='page-item'><a class='page-link'",
-			'first_tagl_close' => "</li>",
-			'last_tag_open' => "<li class='page-item'><a class='page-link'",
-			'last_tagl_close' => "</li>"
-		);
-		$data=array(
-			'title'=>'Pengaduan LPJU Kabupaten Tegal',
-			'open_pengaduan'=>'open',
-			'pengaduan_data'=>'active',
-			'dt_pengaduan'=>$this->model->getAllPengaduan($config['per_page'],$dari),
-			'start'=>$dari,
-		);
-		$this->pagination->initialize($config);
-		return view('pages/v_header',$data);
-		return view('pengaduan/v_pengaduan');
-		return view('pages/v_footer');
+		$page = $this->request->getUri()->getSegment(2); 
+		$dari = ($page && is_numeric($page)) ? ($page - 1) * $perPage : 0;
+
+		$total = $this->model->getJmlPengaduan();
+
+		$dt_pengaduan = $this->model->getAllPengaduan($perPage, $dari);
+
+		$pager = \Config\Services::pager();
+		$pagerConfig = [
+			'base_url' => base_url('adminpengaduan'),
+			'total' => $total,
+			'perPage' => $perPage,
+			'page' => $page ?: 1,
+		];
+
+		$data = [
+			'title' => 'Pengaduan LPJU Kabupaten Tegal',
+			'open_pengaduan' => 'open',
+			'pengaduan_data' => 'active',
+			'dt_pengaduan' => $dt_pengaduan,
+			'pager' => $pager->makeLinks($page ?: 1, $perPage, $total),
+			'start' => $dari,
+		];
+
+		echo view('pages/v_header', $data);
+		echo view('pengaduan/v_pengaduan', $data);
+		echo view('pages/v_footer', $data);
 	}
+
 	
 	public function verifikasi(){
 		$id = $this->request->getUri()->getSegment(3);
@@ -180,15 +174,15 @@ class Adminpengaduan extends BaseController
 			'peta'=>$this->googlemaps->create_map(),
 			'dt_pengaduan'=>$pgn,
 		);
-		return view('pages/v_header',$data);
-		return view('pengaduan/v_perbaikan');
-		return view('pages/v_footer');
+		return view('pages/v_header',$data)
+		. view('pengaduan/v_perbaikan')
+		. view('pages/v_footer');
 	}
 	
 	public function proses_perbaikan(){
 		$id = $this->request->getUri()->getSegment(3);
 		$idx['id_pengaduan'] = $this->request->getUri()->getSegment(3);
-		$dtpengaduan = $this->model->getSelectedData('tbl_pengaduan',$idx)->getResult();
+		$dtpengaduan = $this->model->getSelectedData('tbl_pengaduan',$idx)	;
 		foreach($dtpengaduan as $row){
 			$nama = $row->pelapor;
 			$telp = $row->no_telp;
@@ -283,13 +277,13 @@ class Adminpengaduan extends BaseController
 			'pengaduan_data'=>'active',
 			'peta'=>$this->googlemaps->create_map(),
 			'dt_pengaduan'=>$pgn,
-			'dt_status'=>$this->model->getSelectedData('tbl_pengaduan_status',$idx)->getResult(),
-			'dt_tindakan'=>$this->model->getSelectedData('tbl_tindakan',$idx)->getResult(),
-			'dt_foto'=>$this->model->getSelectedData('tbl_tindakan_foto',$idx)->getResult(),
+			'dt_status'   => $this->model->getSelectedData('tbl_pengaduan_status', $idx),
+			'dt_tindakan' => $this->model->getSelectedData('tbl_tindakan', $idx),
+			'dt_foto'     => $this->model->getSelectedData('tbl_tindakan_foto', $idx),
 		);
-		return view('pages/v_header',$data);
-		return view('pengaduan/v_lihat_pengaduan');
-		return view('pages/v_footer');
+		return view('pages/v_header',$data)
+		. view('pengaduan/v_lihat_pengaduan')
+		. view('pages/v_footer');
 	}
 	
 	public function tambah(){
@@ -313,9 +307,9 @@ class Adminpengaduan extends BaseController
 			'dt_kecamatan'=>$this->model->getAllKecamatan(),
 			'peta'=>$this->googlemaps->create_map(),
 		);
-		return view('pages/v_header',$data);
-		return view('pengaduan/v_tambah_pengaduan');
-		return view('pages/v_footer');
+		return view('pages/v_header',$data)
+		. view('pengaduan/v_tambah_pengaduan')
+		. view('pages/v_footer');
 	}
 	
 	public function proses_tambah(){
@@ -366,9 +360,9 @@ class Adminpengaduan extends BaseController
 					'dt_kecamatan'=>$this->model->getAllKecamatan(),
 					'peta'=>$this->googlemaps->create_map(),
 				);
-				return view('pages/v_header',$data);
-				return view('pengaduan/v_tambah_pengaduan');
-				return view('pages/v_footer');
+				return view('pages/v_header',$data)
+				. view('pengaduan/v_tambah_pengaduan')
+				. view('pages/v_footer');
 			} else {
 				$upload = $this->upload->data();
 				$data=array(
@@ -410,7 +404,7 @@ class Adminpengaduan extends BaseController
 	
 	public function peta(){
 		$confmap = array(
-			'center'=>'-6.99926531, 109.13596825',
+			'center'=>'-6.99926531,109.13596825',
 			'zoom'=>'auto',
 			'map_height'=>500,
 			'map_type'=>'HYBRID',
@@ -441,9 +435,9 @@ class Adminpengaduan extends BaseController
 			'dt_kecamatan'=>$this->model->getAllKecamatan(),
 			'peta'=>$this->googlemaps->create_map(),
 		);
-		return view('pages/v_header',$data);
-		return view('pengaduan/v_peta');
-		return view('pages/v_footer');
+		return view('pages/v_header',$data)
+		. view('pengaduan/v_peta')
+		. view('pages/v_footer');
 	}
 	
 	public function cari(){
@@ -455,9 +449,9 @@ class Adminpengaduan extends BaseController
 			'dt_pengaduan'=>$this->model->getCariPengaduan($id),
 			'start'=>0,
 		);
-		return view('pages/v_header',$data);
-		return view('pengaduan/v_pengaduan');
-		return view('pages/v_footer');
+		return view('pages/v_header',$data)
+		. view('pengaduan/v_pengaduan')
+		. view('pages/v_footer');
 	}
 	
 	public function tolak(){
@@ -534,9 +528,9 @@ class Adminpengaduan extends BaseController
 			'dt_pengaduan'=>$this->model->getJalanPengaduan($id),
 			'peta'=>$this->googlemaps->create_map(),
 		);
-		return view('pages/v_header',$data);
-		return view('pengaduan/v_edit_pengaduan');
-		return view('pages/v_footer');
+		return view('pages/v_header',$data)
+		. view('pengaduan/v_edit_pengaduan')
+		. view('pages/v_footer');
 	}
 	
 	public function proses_edit(){
