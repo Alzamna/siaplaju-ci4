@@ -32,14 +32,14 @@ class Adminpju extends BaseController
 	public function index()
 	{
 		$perPage = 20;
-		$page = (int) ($this->request->getGet('page') ?? 1); // ambil ?page=
+		$page = (int) ($this->request->getGet('page') ?? 1); 
 		$offset = ($page - 1) * $perPage;
 
 		$num = $this->model->getJmlPju();
 		$pju = $this->model->getAllPju($perPage, $offset);
 
 		$pager = \Config\Services::pager();
-		$pager->makeLinks($page, $perPage, $num);
+		$pager->makeLinks($page, $perPage, $num,);
 
 		$data = [
 			'title' => 'Data PJU',
@@ -80,72 +80,71 @@ class Adminpju extends BaseController
 		. view('pages/v_footer');
 	}
 	
-	public function proses_tambah(){
-		if(!empty($_FILES['foto']['name'])){
-			$name = date("Ymdhis");
-			$length = count($_FILES['foto']['name']);
-			for($i = 0; $i < $length; $i++){
-				$_FILES['files']['name'] = $_FILES['foto']['name'][$i];
-                $_FILES['files']['type'] = $_FILES['foto']['type'][$i];
-                $_FILES['files']['tmp_name'] = $_FILES['foto']['tmp_name'][$i];
-                $_FILES['files']['error'] = $_FILES['foto']['error'][$i];
-                $_FILES['files']['size'] = $_FILES['foto']['size'][$i];
-				
-				$config=array(
-					'file_name'=>$name.'_'.$i,
-					'upload_path'=>'./upload/temp/',
-					'allowed_types'=>'jpg|png|jpeg|bmp',
-					'max_size'=>'0',
-				);
-				$this->upload->initialize($config);
-				if($this->upload->do_upload('files')){
-					$upload = $this->upload->data();
-					$foto[$i]=array(
-						'id_pju'=>$id,
-						'nama_foto'=>$upload['file_name'],
-					);
-					$this->model->insertData('tbl_pju_foto',$foto[$i]);
-					
-					$image = \Config\Services::image()
-					->withFile('./upload/temp/' . $upload['file_name'])
-					->resize(600, 600, true, 'auto')   // maintain_ratio = TRUE
-					->save('./upload/foto/' . $upload['file_name']);
+	public function proses_tambah()
+	{
+		$data = [
+			'id_jalan'   => $this->request->getPost('jalan'),
+			'id_pel'     => $this->request->getPost('id_pel'),
+			'no_gardu'   => $this->request->getPost('no_gardu'),
+			'no_pal'     => $this->request->getPost('no_pal'),
+			'jenis'      => $this->request->getPost('jenis'),
+			'kwh'        => $this->request->getPost('kwh'),
+			'daya'       => $this->request->getPost('daya'),
+			'posisi'     => $this->request->getPost('posisi'),
+			'kondisi'    => $this->request->getPost('kondisi'),
+			'keterangan' => $this->request->getPost('keterangan'),
+			'lat'        => $this->request->getPost('lat'),
+			'lng'        => $this->request->getPost('lng'),
+		];
 
+		$this->model->insertData('tbl_pju', $data);
+
+		$id = $this->model->db->insertID();
+
+		$files = $this->request->getFiles();
+		if($files && isset($files['foto'])){
+			foreach($files['foto'] as $i => $file){
+				if($file->isValid() && !$file->hasMoved()){
+					$newName = 'PJU_' . $id . '_' . time() . '_' . $i . '.' . $file->getExtension();
+					
+					$file->move(FCPATH . 'upload/foto/', $newName);
+
+					\Config\Services::image()
+						->withFile(FCPATH . 'upload/foto/' . $newName)
+						->resize(600, 600, true, 'auto')
+						->save(FCPATH . 'upload/foto/' . $newName);
+
+					$this->model->insertData('tbl_pju_foto', [
+						'id_pju'     => $id,
+						'nama_foto'  => $newName,
+					]);
 				}
 			}
 		}
-		
-		$data=array(
-			'id_jalan'=>$this->request->getPost('jalan'),
-			'id_pel'=>$this->request->getPost('id_pel'),
-			'no_gardu'=>$this->request->getPost('no_gardu'),
-			'no_pal'=>$this->request->getPost('no_pal'),
-			'jenis'=>$this->request->getPost('jenis'),
-			'kwh'=>$this->request->getPost('kwh'),
-			'daya'=>$this->request->getPost('daya'),
-			'posisi'=>$this->request->getPost('posisi'),
-			'kondisi'=>$this->request->getPost('kondisi'),
-			'keterangan'=>$this->request->getPost('keterangan'),
-			'lat'=>$this->request->getPost('lat'),
-			'lng'=>$this->request->getPost('lng'),
-		);
-		$this->model->insertData('tbl_pju',$data);
-		redirect('adminpju');
+
+		return redirect()->to('adminpju')->with('sukses', 'Data PJU berhasil ditambahkan.');
 	}
+
 	
 	public function cari(){
 		$id = $this->request->getPost('cari');
+		$pjuData = $this->model->getCariPju($id);
+
+		$pager = \Config\Services::pager();
+
 		$data=array(
 			'title'=>'Data PJU Kabupaten Tegal',
 			'open_pju'=>'open',
 			'pju_data'=>'active',
-			'dt_pju'=>$this->model->getCariPju($id),
+			'dt_pju'=>$pjuData,
 			'start'=>0,
+			'pager'=>$pager, 
 		);
 		return view('pages/v_header', $data)
 		. view('pju/v_pju', $data)
 		. view('pages/v_footer');
 	}
+
 	
 	public function edit(){
 		$id = $this->request->getUri()->getSegment(3);
@@ -242,13 +241,14 @@ class Adminpju extends BaseController
 			'lng'=>$this->request->getPost('lng'),
 		);
 		$this->model->updateData('tbl_pju',$data,$id);
-		redirect('adminpju');
+		return redirect()->to('adminpju')->with('sukses', 'Data PJU berhasil diupdate.');
+		
 	}
 	
 	public function hapus(){
 		$id['id_pju'] = $this->request->getUri()->getSegment(3);
         $this->model->deleteData('tbl_pju',$id);
-        redirect('adminpju');
+        return redirect()->to('adminpju')->with('sukses', 'Data PJU berhasil dihapus.');
 	}
 	
 	public function peta(){
@@ -392,7 +392,7 @@ class Adminpju extends BaseController
 	
 	public function get_jalan(){
 		$id['id_kecamatan'] = $this->request->getPost('id', TRUE);
-		$jalan = $this->model->getSelectedData('tbl_jalan',$id)->getResult();
+		$jalan = $this->model->getSelectedData('tbl_jalan',$id)();
 		echo json_encode($jalan);
 	}
 

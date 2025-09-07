@@ -38,7 +38,7 @@
 					</div>
 				</div>
 				<div class="table-responsive">
-					<table class="table table-bordered table-striped table-vcenter">
+					<table class="table table-bordered table-striped table-vcenter js-dataTable-full-pagination">
 						<thead>
 							<tr>
 								<th class="text-center">No</th>
@@ -124,10 +124,6 @@
 							<?php }} ?>
 						</tbody>
 					</table>
-					
-					<nav aria-label="Page navigation">
-						<?= $pager ?>
-					</nav>
 				</div>
 			</div>
 		</div>

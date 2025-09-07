@@ -52,7 +52,7 @@
 									<button type="button" class="btn btn-sm btn-warning" data-toggle="modal" data-target="#jalan-edit-<?php echo $row->id_jalan;?>" title="Edit jalan">
 										<i class="fa fa-pencil"></i>
 									</button>
-									<a href="<?php echo site_url('adminmaster/hapus_jalan/'.$row->id_jalan);?>">
+									<a href="<?php echo site_url('adminjalan/hapus_jalan/'.$row->id_jalan);?>">
 										<button type="button" class="btn btn-sm btn-danger" data-toggle="tooltip" title="Hapus jalan">
 											<i class="fa fa-trash"></i>
 										</button>
@@ -72,7 +72,7 @@
 <div class="modal fade" id="jalan-tambah" tabindex="-1" role="dialog" aria-labelledby="jalan-tambah" aria-hidden="true">
 	<div class="modal-dialog modal-dialog-popout" role="document">
 		<div class="modal-content">
-		<form action="<?php echo site_url('adminmaster/proses_tambah_jalan');?>" method="post">
+		<form action="<?php echo site_url('adminjalan/tambah');?>" method="post">
 		<?= csrf_field() ?> 
 			<div class="block block-themed block-transparent mb-0">
 				<div class="block-header">
@@ -140,7 +140,7 @@
 <div class="modal fade" id="jalan-edit-<?php echo $row->id_jalan;?>" tabindex="-1" role="dialog" aria-labelledby="jalan-edit" aria-hidden="true">
 	<div class="modal-dialog modal-dialog-popout" role="document">
 		<div class="modal-content">
-		<form action="<?php echo site_url('adminmaster/proses_edit_jalan/'.$row->id_jalan);?>" method="post">
+		<form action="<?php echo site_url('adminjalan/proses_edit_jalan/'.$row->id_jalan);?>" method="post">
 		<?= csrf_field() ?>
 			<div class="block block-themed block-transparent mb-0">
 				<div class="block-header">

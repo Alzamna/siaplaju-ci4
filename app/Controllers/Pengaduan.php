@@ -3,6 +3,8 @@ namespace App\Controllers;
 
 use App\Models\Model;
 use App\Models\Model_app;
+use CodeIgniter\Files\File;
+
 
 class Pengaduan extends BaseController
 {
@@ -69,92 +71,88 @@ class Pengaduan extends BaseController
 			. view('home/pages/v_footer');
 	}
 	
-	public function proses_input_pengaduan(){
+
+	public function proses_input_pengaduan()
+	{
 		$id = $this->model->getKodePengaduan();
 		$nama = $this->request->getPost('nama');
 		$phone = $this->request->getPost('telp');
 		$pertama = mb_substr($phone, 0, 1);
-		if($pertama=="0"){
-			$telp = substr_replace($phone,'62',0,1);
-		} else {
-			$telp = $phone;
-		}
-		
-		/*
-		$link = "siaplaju.com/pengaduan/lihat/".$id;
-		$this->google_url_api->enable_debug(TRUE);
-		$short_url = $this->google_url_api->shorten($link);
-		return $short_url->id;
-		*/
-		
-		$foto = 'foto';
-		if(empty($_FILES['foto']['name'])){
-			$data=array(
+		$telp = ($pertama == "0") ? substr_replace($phone,'62',0,1) : $phone;
+
+		$file = $this->request->getFile('foto');
+
+		if(!$file || !$file->isValid()){
+			// Tidak ada foto
+			$data = [
 				'id_pengaduan'=>$id,
 				'pelapor'=>$nama,
 				'no_telp'=>$telp,
 				'laporan'=>$this->request->getPost('isi'),
 				'tgl_pengaduan'=>date('Y-m-d H:i:s'),
 				'status'=>1,
-			);
-			$status=array(
+			];
+			$status = [
 				'id_pengaduan'=>$id,
 				'status'=>1,
 				'keterangan'=>'Pengaduan Diterima',
 				'tgl_status'=>date('Y-m-d H:i:s'),
-			);
+			];
 			$this->model->insertData('tbl_pengaduan_status',$status);
 			$this->model->insertData('tbl_pengaduan',$data);
-			//$this->kirimpengaduan($id,$nama,$telp);
 		} else {
-			$config=array(
-				'upload_path'=>'./upload/temp/',
-				'allowed_types'=>'gif|jpg|png|jpeg|bmp',
-				'max_size'=>'10240',
-				'file_name'=>$id,
-			);
-			$this->upload->initialize($config);
-			if(!$this->upload->do_upload($foto)){
-			$data = [
-				'title'           => 'Input Pengaduan Lampu Penerangan Jalan Umum',
-				'aktif_pengaduan' => 'active',
-				'error'           => $this->upload->display_errors(),
-			];
-
-			return view('home/pages/v_header', $data)
-				. view('home/pengaduan/v_pengaduan_input', $data)
-				. view('home/pages/v_footer');
-
-			} else {
-				$upload = $this->upload->data();
-				$data=array(
-					'id_pengaduan'=>$id,
-					'pelapor'=>$this->request->getPost('nama'),
-					'no_telp'=>$this->request->getPost('telp'),
-					'laporan'=>$this->request->getPost('isi'),
-					'tgl_pengaduan'=>date('Y-m-d H:i:s'),
-					'status'=>1,
-					'foto'=>$upload['file_name'],
-				);
-				$status=array(
-					'id_pengaduan'=>$id,
-					'status'=>1,
-					'keterangan'=>'Pengaduan Diterima',
-					'tgl_status'=>date('Y-m-d H:i:s'),
-				);
-				$this->model->insertData('tbl_pengaduan_status',$status);
-				$this->model->insertData('tbl_pengaduan',$data);
-				//$this->kirimpengaduan($id,$nama,$telp);
-				$imageService = \Config\Services::image()
-				->withFile('./upload/temp/' . $upload['file_name'])
-				->resize(1200, 800, true, 'height') 
-				->save('./upload/foto/pengaduan/' . $upload['file_name']);
-
+			// Ada foto
+			if(!$file->isValid()){
+				$data = [
+					'title' => 'Input Pengaduan Lampu Penerangan Jalan Umum',
+					'aktif_pengaduan' => 'active',
+					'error' => $file->getErrorString()
+				];
+				return view('home/pages/v_header', $data)
+					. view('home/pengaduan/v_pengaduan_input', $data)
+					. view('home/pages/v_footer');
 			}
+
+			// Simpan file sementara
+			$file = $this->request->getFile('foto');
+			$newName = $id . '.' . $file->getExtension();
+			$tempPath = WRITEPATH . 'upload/temp/';
+			$finalPath = WRITEPATH . 'upload/pengaduan/';
+
+
+			// Simpan sementara
+			$file->move($tempPath, $newName);
+
+			// Resize
+			\Config\Services::image()
+			->withFile($tempPath . $newName)
+			->resize(1200, 800, true, 'height')
+			->save($finalPath . $newName);
+
+			// Simpan data ke DB
+			$data = [
+				'id_pengaduan'=>$id,
+				'pelapor'=>$nama,
+				'no_telp'=>$telp,
+				'laporan'=>$this->request->getPost('isi'),
+				'tgl_pengaduan'=>date('Y-m-d H:i:s'),
+				'status'=>1,
+				'foto'=>$newName
+			];
+			$status = [
+				'id_pengaduan'=>$id,
+				'status'=>1,
+				'keterangan'=>'Pengaduan Diterima',
+				'tgl_status'=>date('Y-m-d H:i:s'),
+			];
+			$this->model->insertData('tbl_pengaduan_status',$status);
+			$this->model->insertData('tbl_pengaduan',$data);
 		}
-		session()->setFlashdata('sukses', '<script>alert("Terima kasih laporan anda berhasil terkirim, Admin kami akan memverifikasi dan menampilkan laporan anda dalam 1x24 jam. Mohon untuk tidak menginputkan pengaduan yang sama.");</script>');
-		redirect('pengaduan');
+
+		session()->setFlashdata('sukses', '<script>alert("Terima kasih laporan anda berhasil terkirim.");</script>');
+		return redirect()->to('pengaduan');
 	}
+
 	
 	public function lihat(){
 		$id = $this->request->getUri()->getSegment(3);

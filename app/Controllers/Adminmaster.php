@@ -39,7 +39,7 @@ class Adminmaster extends BaseController{
 			'password' => password_hash($this->request->getPost('password'), PASSWORD_BCRYPT),
 		);
 		$this->model->insertData('tbl_user',$user);
-		redirect('adminmaster/admin');
+		return redirect()->to('adminmaster/admin');
 	}
 	
 	public function proses_edit_admin(){
@@ -53,13 +53,13 @@ class Adminmaster extends BaseController{
 			'password' => password_hash($this->request->getPost('password'), PASSWORD_BCRYPT),
 		);
 		$this->model->updateData('tbl_user',$user,$id);
-		redirect('adminmaster/admin');
+		return redirect()->to('adminmaster/admin');
 	}
 	
 	public function hapus_user(){
 		$id['id_user'] = $this->request->getUri()->getSegment(3);
         $this->model->deleteData('tbl_user',$id);
-        redirect('master/admin');
+		return redirect()->to('master/admin');
 	}
 	
 	public function rayon(){
@@ -79,7 +79,7 @@ class Adminmaster extends BaseController{
 			'nama_rayon'=>$this->request->getPost('nama_rayon'),
 		);
 		$this->model->insertData('tbl_rayon',$data);
-		redirect('adminmaster/rayon');
+		return redirect()->to('adminmaster/rayon');
 	}
 	
 	public function proses_edit_rayon(){
@@ -88,13 +88,13 @@ class Adminmaster extends BaseController{
 			'nama_rayon'=>$this->request->getPost('nama_rayon'),
 		);
 		$this->model->updateData('tbl_rayon',$data,$id);
-		redirect('adminmaster/rayon');
+		return redirect()->to('adminmaster/rayon');
 	}
 	
 	public function hapus_rayon(){
 		$id['id_rayon'] = $this->request->getUri()->getSegment(3);
         $this->model->deleteData('tbl_rayon',$id);
-        redirect('adminmaster/rayon');
+        return redirect()->to('adminmaster/rayon');
 	}
 	
 	public function kecamatan(){
@@ -116,7 +116,7 @@ class Adminmaster extends BaseController{
 			'id_rayon'=>$this->request->getPost('rayon'),
 		);
 		$this->model->insertData('tbl_kecamatan',$data);
-		redirect('adminmaster/kecamatan');
+		return redirect()->to('adminmaster/kecamatan');
 	}
 	
 	public function proses_edit_kecamatan(){
@@ -126,13 +126,13 @@ class Adminmaster extends BaseController{
 			'id_rayon'=>$this->request->getPost('rayon'),
 		);
 		$this->model->updateData('tbl_kecamatan',$data,$id);
-		redirect('adminmaster/kecamatan');
+		return redirect()->to('adminmaster/kecamatan');
 	}
 	
 	public function hapus_kecamatan(){
 		$id['id_kecamatan'] = $this->request->getUri()->getSegment(3);
         $this->model->deleteData('tbl_kecamatan',$id);
-        redirect('adminmaster/kecamatan');
+        return redirect()->to('adminmaster/kecamatan');
 	}
 	
 	public function jalan()
@@ -171,7 +171,7 @@ class Adminmaster extends BaseController{
 			'panjang_jalan'=>$this->request->getPost('panjang_jalan'),
 		);
 		$this->model->insertData('tbl_jalan',$data);
-		redirect('adminmaster/jalan');
+		return redirect()->to('adminmaster/jalan');
 	}
 	
 	public function proses_edit_jalan(){
@@ -183,12 +183,13 @@ class Adminmaster extends BaseController{
 			'panjang_jalan'=>$this->request->getPost('panjang_jalan'),
 		);
 		$this->model->updateData('tbl_jalan',$data,$id);
-		redirect('adminmaster/jalan');
+		return redirect()->to('adminmaster/jalan');
 	}
 	
 	public function hapus_jalan(){
 		$id['id_jalan'] = $this->request->getUri()->getSegment(3);
         $this->model->deleteData('tbl_jalan',$id);
-        redirect('adminmaster/jalan');
+        return redirect()->to('adminmaster/jalan');
 	}
+
 }

@@ -13,7 +13,7 @@
 			</div>
 			<?php foreach($dt_aspirasi as $row){ ?>
 			<div class="block-content">
-				<form action="<?php echo site_url('adminaspirasi/proses_verifikasi/'.$row->id_aspirasi);?>" method="post" enctype="multipart/form-data">
+				<form action="<?php echo site_url('adminaspirasi/verifikasi/'.$row->id_aspirasi);?>" method="post" enctype="multipart/form-data">
 					<?= csrf_field() ?>
 					<div class="row">
                         <div class="col-sm-8">

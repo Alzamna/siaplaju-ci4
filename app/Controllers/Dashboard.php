@@ -7,9 +7,10 @@ class Dashboard extends BaseController
     public function __construct()
     {
         $session = session();
-        if ($session->get('login') != 1) {
+        if ($session->get('login') != true) {
             return redirect()->to('/login');
         }
+
     }
 
     public function index()

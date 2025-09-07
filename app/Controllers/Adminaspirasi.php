@@ -57,9 +57,8 @@ class Adminaspirasi extends BaseController
 
     public function verifikasi($id = null)
     {
-        // Konfigurasi peta
         $confmap = [
-            'center'                       => '-6.99926531, 109.13596825',
+            'center'                       => '-6.99926531,109.13596825',
             'zoom'                         => 11,
             'map_height'                   => 500,
             'map_type'                     => 'HYBRID',
@@ -70,14 +69,11 @@ class Adminaspirasi extends BaseController
             'onclick'                      => 'updateKoordinat(event.latLng.lat(), event.latLng.lng());setMapOnAll(map);clearMarker(); createMarker_map({ map: map, position:event.latLng });',
         ];
 
-        // Panggil library googlemaps
         $googlemaps = service('googlemaps');
         $googlemaps->initialize($confmap);
 
-        // Ambil data aspirasi dari model
         $dtAspirasi = $this->model->getDataAspirasi($id);
 
-        // Siapkan data untuk dikirim ke view
         $data = [
             'title'          => 'Verifikasi Aspirasi LPJU',
             'open_aspirasi'  => 'open',
@@ -86,7 +82,6 @@ class Adminaspirasi extends BaseController
             'peta'           => $googlemaps->create_map(),
         ];
 
-        // Return view dengan template CI4
         return view('pages/v_header', $data)
             . view('aspirasi/v_verifikasi')
             . view('pages/v_footer');
@@ -149,11 +144,8 @@ class Adminaspirasi extends BaseController
 
     public function hapus($id = null)
     {
-        $idx = ['id_aspirasi' => $id];
-        $data = ['aktif' => 0];
-
-        $this->model->updateData('tbl_aspirasi', $data, $idx);
-
+        $this->model->deleteData('tbl_aspirasi', ['id_aspirasi' => $id]);
         return redirect()->to('adminaspirasi');
     }
+
 }

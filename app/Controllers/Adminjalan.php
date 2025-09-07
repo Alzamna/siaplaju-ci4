@@ -114,7 +114,7 @@ class Adminjalan extends BaseController
     public function get_jalan()
     {
         $id = ['id_kecamatan' => $this->request->getGet('id')];
-        $jalan = $this->model->getSelectedData('tbl_jalan', $id)->getResultArray();
+        $jalan = $this->model->getSelectedData('tbl_jalan', $id);
         return $this->response->setJSON($jalan);
     }
 }

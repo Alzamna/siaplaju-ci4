@@ -88,9 +88,9 @@ class Adminpengaduan extends BaseController
 			'dt_pengaduan'=>$this->model->getDataPengaduan($id),
 			'peta'=>$this->googlemaps->create_map(),
 		);
-		return view('pages/v_header',$data);
-		return view('pengaduan/v_verifikasi');
-		return view('pages/v_footer');
+		return view('pages/v_header',$data)
+		. view('pengaduan/v_verifikasi')
+		. view('pages/v_footer');
 	}
 	
 	public function proses_verifikasi(){
@@ -120,7 +120,7 @@ class Adminpengaduan extends BaseController
 		$this->model->updateData('tbl_pengaduan',$data,$idx);
 		$this->model->insertData('tbl_tindakan',$tindakan);
 		$this->model->insertData('tbl_pengaduan_status',$status);
-		redirect('adminpengaduan');
+		return redirect()->to('adminpengaduan');
 	}
 	
 	public function proses_pengaduan(){
@@ -144,7 +144,7 @@ class Adminpengaduan extends BaseController
 		$this->model->updateData('tbl_pengaduan',$data,$idx);
 		$this->model->insertData('tbl_tindakan',$tindakan);
 		$this->model->insertData('tbl_pengaduan_status',$status);
-		redirect('adminpengaduan');
+		return redirect()->to('adminpengaduan');
 	}
 	
 	public function inputperbaikan(){
@@ -203,21 +203,18 @@ class Adminpengaduan extends BaseController
 					'allowed_types'=>'jpg|png|jpeg|bmp',
 					'max_size'=>'0',
 				);
-				$this->upload->initialize($config);
-				if($this->upload->do_upload('files')){
-					$upload = $this->upload->data();
-					$foto[$i]=array(
-						'id_pengaduan'=>$id,
-						'nama_foto'=>$upload['file_name'],
-					);
-					$this->model->insertData('tbl_tindakan_foto',$foto[$i]);
-					
-					$image = \Config\Services::image()
-					->withFile('./upload/temp/' . $upload['file_name'])
-					->resize(600, 600, true, 'auto') // maintain_ratio TRUE
-					->save('./upload/foto/perbaikan/' . $upload['file_name']);
+				$file = $this->request->getFile('foto');
+				if ($file->isValid() && !$file->hasMoved()) {
+					$newName = $file->getRandomName();
+					$file->move(FCPATH . 'upload/temp', $newName);
 
+					// Resize image
+					\Config\Services::image()
+						->withFile(FCPATH . 'upload/temp/' . $newName)
+						->resize(1200, 800, true, 'auto')
+						->save(FCPATH . 'upload/foto/pengaduan/' . $newName);
 				}
+
 			}
 		}
 
@@ -239,7 +236,7 @@ class Adminpengaduan extends BaseController
 		$this->model->insertData('tbl_tindakan',$tindakan);
 		$this->model->insertData('tbl_pengaduan_status',$status);
 		//$this->kirimsurvey($id,$nama,$telp);
-		redirect('adminpengaduan');
+		return redirect()->to('adminpengaduan');
 	}
 	
 	public function lihat(){
@@ -399,7 +396,7 @@ class Adminpengaduan extends BaseController
 
 			}
 		}
-		redirect('adminpengaduan');
+		return redirect()->to('adminpengaduan');
 	}
 	
 	public function peta(){
@@ -477,15 +474,25 @@ class Adminpengaduan extends BaseController
 		$this->model->updateData('tbl_pengaduan',$data,$idx);
 		$this->model->insertData('tbl_tindakan',$tindakan);
 		$this->model->insertData('tbl_pengaduan_status',$status);
-		redirect('adminpengaduan');
+		return redirect()->to('adminpengaduan');
 	}
 	
-	public function hapus(){
-		$id['id_pengaduan'] = $this->request->getUri()->getSegment(3);
-		$table = array('tbl_pengaduan','tbl_tindakan','tbl_tindakan_foto','tbl_pengaduan_status');
-        $this->model->deleteData($table,$id);
-        redirect('adminpengaduan');
+	public function hapus()
+	{
+		$id = $this->request->getUri()->getSegment(3);
+
+		if (!$id) {
+			return redirect()->to('adminpengaduan');
+		}
+
+		$this->model->deleteData('tbl_pengaduan', ['id_pengaduan' => $id]);
+		$this->model->deleteData('tbl_tindakan', ['id_pengaduan' => $id]);
+		$this->model->deleteData('tbl_tindakan_foto', ['id_pengaduan' => $id]);
+		$this->model->deleteData('tbl_pengaduan_status', ['id_pengaduan' => $id]);
+
+		return redirect()->to('adminpengaduan');
 	}
+
 	
 	public function edit(){
 		$id = $this->request->getUri()->getSegment(3);
@@ -544,7 +551,7 @@ class Adminpengaduan extends BaseController
 			'lng'=>$this->request->getPost('lng'),
 		);	
 		$this->model->updateData('tbl_pengaduan',$data,$idx);
-		redirect('adminpengaduan/lihat/'.$id);
+		return redirect()->to('adminpengaduan/lihat/'.$id);
 	}
 	
 	private function kirimsurvey($id,$nama,$telp){

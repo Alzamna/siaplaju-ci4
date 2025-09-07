@@ -11,24 +11,30 @@ $routes->setTranslateURIDashes(false);
 $routes->set404Override();
 
 // -------------------
-// Default & Auth
+// Default 
 // -------------------
-$routes->get('/', 'Beranda::index');
-$routes->get('kontak', 'Kontak::index');
+$routes->get('/',                     'Beranda::index');
 
-$routes->get('pengaduan', 'Pengaduan::index');
-$routes->get('pengaduan/input', 'Pengaduan::input');
+// -------------------
+// Pengaduan
+// -------------------
+$routes->get('pengaduan',             'Pengaduan::index');
+$routes->get('pengaduan/input',       'Pengaduan::input');
 $routes->post('pengaduan/proses_input_pengaduan', 'Pengaduan::proses_input_pengaduan');
-$routes->get('pengaduan/lihat/(:segment)', 'Pengaduan::lihat/$1');
+$routes->get('pengaduan/lihat/(:segment)',        'Pengaduan::lihat/$1');
 
+// -------------------
+// Aspirasi
+// -------------------
+$routes->get('aspirasi',              'Aspirasi::index');
+$routes->get('aspirasi/input',        'Aspirasi::input');
+$routes->post('aspirasi/proses_aspirasi', 'Aspirasi::proses_aspirasi');
 
-
-// Halaman aspirasi
-$routes->get('aspirasi', 'Aspirasi::index');         
-$routes->get('aspirasi/input', 'Aspirasi::input');   
-$routes->post('aspirasi/proses', 'Aspirasi::proses_aspirasi'); 
-
-$routes->get('peta', 'Peta::index');
+// -------------------
+// Peta & Kontak
+// -------------------
+$routes->get('peta',                  'Peta::index');
+$routes->get('kontak',                'Kontak::index');
 
 
 
@@ -75,7 +81,7 @@ $routes->group('adminmaster', function($routes) {
 // Admin Aspirasi
 $routes->group('adminaspirasi', function($routes) {
     $routes->get('/', 'Adminaspirasi::index');
-    $routes->get('verifikasi/(:segment)', 'Adminaspirasi::verifikasi/$1');
+    $routes->match(['get', 'post'], 'verifikasi/(:segment)', 'Adminaspirasi::verifikasi/$1');
     $routes->get('lihat/(:segment)', 'Adminaspirasi::lihat/$1');
     $routes->post('cari', 'Adminaspirasi::cari');
     $routes->get('hapus/(:segment)', 'Adminaspirasi::hapus/$1');
@@ -85,40 +91,40 @@ $routes->group('adminaspirasi', function($routes) {
 $routes->group('adminjalan', function($routes) {
     $routes->get('/', 'Adminjalan::index');
     $routes->post('tambah', 'Adminjalan::proses_tambah_jalan');
-    $routes->post('edit/(:num)', 'Adminjalan::proses_edit_jalan/$1');
-    $routes->get('hapus/(:num)', 'Adminjalan::hapus_jalan/$1');
+    $routes->post('proses_edit_jalan/(:num)', 'Adminjalan::proses_edit_jalan/$1');
+    $routes->get('hapus_jalan/(:num)', 'Adminjalan::hapus_jalan/$1');
     $routes->get('lihat/(:num)', 'Adminjalan::lihat/$1');
     $routes->get('get_jalan', 'Adminjalan::get_jalan');
 });
 
 // Admin PJU
-$routes->get('adminpju', 'Adminpju::index');
-$routes->get('adminpju/tambah', 'Adminpju::tambah');
-$routes->post('adminpju/proses_tambah', 'Adminpju::proses_tambah');
-$routes->post('adminpju/cari', 'Adminpju::cari');
+$routes->get('adminpju',               'Adminpju::index');
+$routes->get('adminpju/tambah',        'Adminpju::tambah');
+$routes->post('adminpju/proses_tambah','Adminpju::proses_tambah');
+$routes->post('adminpju/cari',         'Adminpju::cari');
 
-$routes->get('adminpju/edit/(:num)', 'Adminpju::edit/$1');
+$routes->get('adminpju/edit/(:num)',   'Adminpju::edit/$1');
 $routes->post('adminpju/proses_edit/(:num)', 'Adminpju::proses_edit/$1');
-$routes->get('adminpju/hapus/(:num)', 'Adminpju::hapus/$1');
-$routes->get('adminpju/lihat/(:num)', 'Adminpju::lihat/$1');
+$routes->get('adminpju/hapus/(:num)',  'Adminpju::hapus/$1');
+$routes->get('adminpju/lihat/(:num)',  'Adminpju::lihat/$1');
 
-$routes->get('adminpju/peta', 'Adminpju::peta');
-$routes->post('adminpju/fpeta', 'Adminpju::fpeta');
+$routes->get('adminpju/peta',          'Adminpju::peta');
+$routes->post('adminpju/fpeta',        'Adminpju::fpeta');
+$routes->post('adminpju/get_jalan',    'Adminpju::get_jalan');
 
-$routes->post('adminpju/get_jalan', 'Adminpju::get_jalan');
 
 
 // Admin Rekap
 $routes->group('adminrekap', function($routes) {
     // Halaman rekap PJU
     $routes->get('pju', 'Adminrekap::pju');
-    $routes->post('fpju', 'Adminrekap::fpju'); // filter rekap PJU
-    $routes->post('export_pju', 'Adminrekap::export_pju'); // export Excel rekap PJU
+    $routes->post('fpju', 'Adminrekap::fpju'); 
+    $routes->post('export_pju', 'Adminrekap::export_pju'); 
 
     // Halaman rekap Pengaduan
     $routes->get('pengaduan', 'Adminrekap::pengaduan');
-    $routes->post('fpengaduan', 'Adminrekap::fpengaduan'); // filter rekap Pengaduan
-    $routes->post('export_pengaduan', 'Adminrekap::export_pengaduan'); // export Excel Pengaduan
+    $routes->post('fpengaduan', 'Adminrekap::fpengaduan'); 
+    $routes->post('export_pengaduan', 'Adminrekap::export_pengaduan'); 
 });
 
 
@@ -129,11 +135,11 @@ $routes->group('adminpengaduan', function($routes) {
 
     // Tambah pengaduan
     $routes->get('tambah', 'Adminpengaduan::tambah');
-    $routes->post('tambah', 'Adminpengaduan::proses_tambah');
+    $routes->post('proses_tambah', 'Adminpengaduan::proses_tambah');
 
     // Edit pengaduan
     $routes->get('edit/(:num)', 'Adminpengaduan::edit/$1');
-    $routes->post('edit/(:num)', 'Adminpengaduan::proses_edit/$1');
+    $routes->post('proses_edit/(:num)', 'Adminpengaduan::proses_edit/$1');
 
     // Hapus pengaduan
     $routes->get('hapus/(:num)', 'Adminpengaduan::hapus/$1');
