@@ -14,7 +14,7 @@
 				<div class="row">
 					<div class="col-lg-4">
 						<form action="<?php echo site_url('adminpju/cari');?>" method="post">
-							<input type="hidden" name="<?php echo $this->security->get_csrf_token_name(); ?>" value="<?php echo $this->security->get_csrf_hash(); ?>">
+							<?= csrf_field() ?>
 							<div class="form-group row">
 								<div class="col-lg-12">
 									<div class="input-group">
@@ -88,7 +88,7 @@
 					</table>
 					
 					<nav aria-label="Page navigation">
-						<?php echo $this->pagination->create_links();?>
+					<?= $pager->links() ?>
 					</nav>
 				</div>
 			</div>

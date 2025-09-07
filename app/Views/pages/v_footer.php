@@ -50,7 +50,7 @@
 					var id_pop = $("#select_produk").val();
 					var post_data = {
 					   'id_pop': id_pop,
-					   '<?php echo $this->security->get_csrf_token_name(); ?>': '<?php echo $this->security->get_csrf_hash(); ?>'
+					   '<?= csrf_field() ?>' : '<?= csrf_hash() ?>'
 					};
 
 					$.ajax({

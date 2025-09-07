@@ -14,9 +14,6 @@ $routes->set404Override();
 // Default & Auth
 // -------------------
 $routes->get('/', 'Beranda::index');
-$routes->get('auth', 'Auth::index');
-$routes->post('auth/login', 'Auth::login');
-$routes->get('auth/logout', 'Auth::logout');
 $routes->get('kontak', 'Kontak::index');
 
 $routes->get('pengaduan', 'Pengaduan::index');
@@ -39,6 +36,11 @@ $routes->get('peta', 'Peta::index');
 // Dashboard
 // -------------------
 $routes->get('dashboard', 'Dashboard::index');
+
+// Login & Auth
+$routes->get('login', 'Login::index');    // tampilkan login (GET)
+$routes->post('login', 'Login::index');   // proses login (POST)
+$routes->get('logout', 'Login::logout'); 
 
 // Admin Master
 $routes->group('adminmaster', function($routes) {
@@ -71,10 +73,10 @@ $routes->group('adminmaster', function($routes) {
 // Admin Aspirasi
 $routes->group('adminaspirasi', function($routes) {
     $routes->get('/', 'Adminaspirasi::index');
-    $routes->get('verifikasi/(:num)', 'Adminaspirasi::verifikasi/$1');
-    $routes->get('lihat/(:num)', 'Adminaspirasi::lihat/$1');
+    $routes->get('verifikasi/(:segment)', 'Adminaspirasi::verifikasi/$1');
+    $routes->get('lihat/(:segment)', 'Adminaspirasi::lihat/$1');
     $routes->post('cari', 'Adminaspirasi::cari');
-    $routes->get('hapus/(:num)', 'Adminaspirasi::hapus/$1');
+    $routes->get('hapus/(:segment)', 'Adminaspirasi::hapus/$1');
 });
 
 // Admin Jalan
@@ -88,12 +90,21 @@ $routes->group('adminjalan', function($routes) {
 });
 
 // Admin PJU
-$routes->group('adminpju', function($routes) {
-    $routes->get('/', 'Adminpju::index');
-    $routes->post('tambah', 'Adminpju::proses_tambah');
-    $routes->post('edit/(:num)', 'Adminpju::proses_edit/$1');
-    $routes->get('hapus/(:num)', 'Adminpju::hapus/$1');
-});
+$routes->get('adminpju', 'Adminpju::index');
+$routes->get('adminpju/tambah', 'Adminpju::tambah');
+$routes->post('adminpju/proses_tambah', 'Adminpju::proses_tambah');
+$routes->post('adminpju/cari', 'Adminpju::cari');
+
+$routes->get('adminpju/edit/(:num)', 'Adminpju::edit/$1');
+$routes->post('adminpju/proses_edit/(:num)', 'Adminpju::proses_edit/$1');
+$routes->get('adminpju/hapus/(:num)', 'Adminpju::hapus/$1');
+$routes->get('adminpju/lihat/(:num)', 'Adminpju::lihat/$1');
+
+$routes->get('adminpju/peta', 'Adminpju::peta');
+$routes->post('adminpju/fpeta', 'Adminpju::fpeta');
+
+$routes->post('adminpju/get_jalan', 'Adminpju::get_jalan');
+
 
 // Admin Rekap
 $routes->group('adminrekap', function($routes) {

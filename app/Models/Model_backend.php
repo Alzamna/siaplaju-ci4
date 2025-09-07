@@ -240,9 +240,12 @@ class Model_backend extends Model
         return $this->db->table($table)->get()->getResult();
     }
 
-    public function getSelectedData($table, $data)
+    function getSelectedData($table, $where)
     {
-        return $this->db->table($table)->getWhere($data);
+        return $this->db->table($table)
+                        ->where($where)
+                        ->get()
+                        ->getResult();  // ambil sebagai object
     }
 
     public function updateData($table, $data, $field_key)

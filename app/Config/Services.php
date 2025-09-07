@@ -2,6 +2,7 @@
 
 namespace Config;
 
+use App\Libraries\Googlemaps;
 use CodeIgniter\Config\BaseService;
 
 /**
@@ -29,4 +30,13 @@ class Services extends BaseService
      *     return new \CodeIgniter\Example();
      * }
      */
+
+     public static function googlemaps($getShared = true)
+    {
+        if ($getShared) {
+            return static::getSharedInstance('googlemaps');
+        }
+
+        return new Googlemaps(); // pastikan namespace class sudah benar
+    }
 }

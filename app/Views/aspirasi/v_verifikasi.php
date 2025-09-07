@@ -14,7 +14,7 @@
 			<?php foreach($dt_aspirasi as $row){ ?>
 			<div class="block-content">
 				<form action="<?php echo site_url('adminaspirasi/proses_verifikasi/'.$row->id_aspirasi);?>" method="post" enctype="multipart/form-data">
-					<input type="hidden" name="<?php echo $this->security->get_csrf_token_name(); ?>" value="<?php echo $this->security->get_csrf_hash(); ?>" readonly>
+					<?= csrf_field() ?>
 					<div class="row">
                         <div class="col-sm-8">
 							<div class="form-group row">
@@ -75,24 +75,26 @@
 						</div>
 						
 						<div class="col-sm-4 text-center">
-							<?php if($row->foto!='') { ?>	
-							<div class="items-push js-gallery">
-								<div class="animated fadeIn">
-									<a class="img-link img-link-zoom-in img-thumb img-lightbox" href="<?php echo base_url('upload/aspirasi/'.$row->foto);?>">
-										<img class="img-fluid" style="height:200px" src="<?php echo base_url('upload/aspirasi/'.$row->foto);?>" alt="">
+							<?php if (!empty($dt_foto)): ?>
+								<?php foreach ($dt_foto as $ft): ?>
+									<a class="img-link img-link-zoom-in img-thumb img-lightbox"
+									href="<?= base_url('upload/foto/perbaikan/'.$ft->nama_foto); ?>">
+										<img class="img-fluid" style="height:200px"
+											src="<?= base_url('upload/foto/perbaikan/'.$ft->nama_foto); ?>" alt="">
 									</a>
+								<?php endforeach; ?>
+							<?php else: ?>
+								<div class="items-push js-gallery">
+									<div class="animated fadeIn">
+										<a class="img-link img-link-zoom-in img-thumb img-lightbox"
+										href="<?= base_url('public/img/image-not-found.png'); ?>">
+											<img class="img-fluid" style="height:200px"
+												src="<?= base_url('public/img/image-not-found.png'); ?>" alt="">
+										</a>
+									</div>
+									<span class="badge badge-danger">TIDAK ADA LAMPIRAN</span>
 								</div>
-							</div>
-							<?php } else { ?>
-							<div class="items-push js-gallery">
-								<div class="animated fadeIn">
-									<a class="img-link img-link-zoom-in img-thumb img-lightbox" href="<?php echo base_url('public/img/image-not-found.png');?>">
-										<img class="img-fluid" style="height:200px" src="<?php echo base_url('public/img/image-not-found.png');?>" alt="">
-									</a>
-								</div>
-								<span class="badge badge-danger">TIDAK ADA LAMPIRAN</span>
-							</div>
-							<?php } ?>
+							<?php endif; ?>
 						</div>
 					</div>
 			</div>

@@ -13,7 +13,7 @@
 			</div>
 			<div class="block-content">
 				<form action="<?php echo site_url('adminpju/proses_tambah');?>" method="post" enctype="multipart/form-data">
-					<input type="hidden" name="<?php echo $this->security->get_csrf_token_name(); ?>" value="<?php echo $this->security->get_csrf_hash(); ?>">
+					<?= csrf_field() ?>
 					<div class="row">
                         <div class="col-sm-6">														
 							<div class="form-group row">

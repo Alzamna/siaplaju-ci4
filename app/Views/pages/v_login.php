@@ -54,8 +54,8 @@
                                 <!-- jQuery Validation (.js-validation-signin class is initialized in js/pages/op_auth_signin.js) -->
                                 <!-- For more examples you can check out https://github.com/jzaefferer/jquery-validation -->
                                 <form class="js-validation-signin" action="<?php echo site_url('login')?>" method="post">
-									<input type="hidden" name="<?php echo $this->security->get_csrf_token_name(); ?>" value="<?php echo $this->security->get_csrf_hash(); ?>">
-                                    <div class="block block-themed block-rounded block-shadow">
+                                <?= csrf_field() ?>
+                                <div class="block block-themed block-rounded block-shadow">
                                         <div class="block-header bg-gd-sea">
                                             <h3 class="block-title">Login Administrator</h3>
                                             <div class="block-options">

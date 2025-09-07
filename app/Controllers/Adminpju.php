@@ -29,52 +29,30 @@ class Adminpju extends BaseController
     }
 
 	
-	public function index(){
-		if($this->request->getUri()->getSegment(3)==FALSE){
-			$dari = 0;
-		} else {
-			$dari = $this->request->getUri()->getSegment(3);
-		};
+	public function index()
+	{
+		$perPage = 20;
+		$page = (int) ($this->request->getGet('page') ?? 1); // ambil ?page=
+		$offset = ($page - 1) * $perPage;
 
 		$num = $this->model->getJmlPju();
-		$config=array(
-			'base_url' => base_url() . service('router')->controllerName() . '/' . service('router')->methodName(),
-			'total_rows'=>$num,
-			'per_page'=>20,
-			'full_tag_open'=> "<ul class='pagination'>",
-			'full_tag_close'=> "</ul>",
-			'num_tag_open' => "<li class='page-item'><a class='page-link'",
-			'num_tag_close' => '</li>',
-			'cur_tag_open' => "<li class='page-item active'><a class='page-link' href='#'>",
-			'cur_tag_close' => "<span class='sr-only'></span></a></li>",
-			'next_tag_open' => "<li class='page-item'><a class='page-link'",
-			'next_tagl_close' => "</li>",
-			'prev_tag_open' => "<li class='page-item'><a class='page-link'",
-			'prev_tagl_close' => "</li>",
-			'first_tag_open' => "<li class='page-item'><a class='page-link'",
-			'first_tagl_close' => "</li>",
-			'last_tag_open' => "<li class='page-item'><a class='page-link'",
-			'last_tagl_close' => "</li>"
-		);
-		$data=array(
-			'title'=>'Data PJU Kabupaten Tegal',
-			'open_pju'=>'open',
-			'pju_data'=>'active',
-			'dt_pju'=>$this->model->getAllPju($config['per_page'],$dari),
-			'start'=>$dari,
-		);
+		$pju = $this->model->getAllPju($perPage, $offset);
+
 		$pager = \Config\Services::pager();
+		$pager->makeLinks($page, $perPage, $num);
 
 		$data = [
 			'title' => 'Data PJU',
-			'pju'   => $this->model->paginate(20), // ambil data 20 per halaman
-			'pager' => $pager
+			'dt_pju' => $pju,
+			'pager'  => $pager,
+			'start'  => $offset
 		];
 
-		return view('pages/v_header', $data);
-		return view('pju/v_pju');
-		return view('pages/v_footer');
+		return view('pages/v_header', $data)
+			. view('pju/v_pju', $data)
+			. view('pages/v_footer');
 	}
+
 	
 	public function tambah(){
 		$confmap = array(
@@ -97,9 +75,9 @@ class Adminpju extends BaseController
 			'dt_kecamatan'=>$this->model->getAllKecamatan(),
 			'peta'=>$this->googlemaps->create_map(),
 		);
-		return view('pages/v_header',$data);
-		return view('pju/v_tambah_pju');
-		return view('pages/v_footer');
+		return view('pages/v_header', $data)
+		. view('pju/v_tambah_pju', $data)
+		. view('pages/v_footer');
 	}
 	
 	public function proses_tambah(){
@@ -164,9 +142,9 @@ class Adminpju extends BaseController
 			'dt_pju'=>$this->model->getCariPju($id),
 			'start'=>0,
 		);
-		return view('pages/v_header',$data);
-		return view('pju/v_pju');
-		return view('pages/v_footer');
+		return view('pages/v_header', $data)
+		. view('pju/v_pju', $data)
+		. view('pages/v_footer');
 	}
 	
 	public function edit(){
@@ -207,9 +185,9 @@ class Adminpju extends BaseController
 			'dt_kecamatan'=>$this->model->getAllKecamatan(),
 			'peta'=>$this->googlemaps->create_map(),
 		);
-		return view('pages/v_header',$data);
-		return view('pju/v_edit_pju');
-		return view('pages/v_footer');
+		return view('pages/v_header', $data)
+		. view('pju/v_edit_pju', $data)
+		. view('pages/v_footer');
 	}
 	
 	public function proses_edit(){
@@ -308,9 +286,9 @@ class Adminpju extends BaseController
 			'dt_kondisi'=>$this->model->getAllKondisiLampu(),
 			'peta'=>$this->googlemaps->create_map(),
 		);
-		return view('pages/v_header',$data);
-		return view('pju/v_peta');
-		return view('pages/v_footer');
+		return view('pages/v_header', $data)
+		. view('pju/v_peta', $data)
+		. view('pages/v_footer');
 	}
 	
 	public function fpeta(){
@@ -371,9 +349,9 @@ class Adminpju extends BaseController
 			'dt_kondisi'=>$this->model->getAllKondisiLampu(),
 			'peta'=>$this->googlemaps->create_map(),
 		);
-		return view('pages/v_header',$data);
-		return view('pju/v_peta');
-		return view('pages/v_footer');
+		return view('pages/v_header', $data)
+		. view('pju/v_peta', $data)
+		. view('pages/v_footer');
 	}
 	
 	public function lihat(){
@@ -407,9 +385,9 @@ class Adminpju extends BaseController
 			'peta'=>$this->googlemaps->create_map(),
 			'dt_pju'=>$pju,
 		);
-		return view('pages/v_header',$data);
-		return view('pju/v_lihat_pju');
-		return view('pages/v_footer');
+		return view('pages/v_header', $data)
+		. view('pju/v_lihat_pju', $data)
+		. view('pages/v_footer');
 	}
 	
 	public function get_jalan(){
@@ -417,4 +395,6 @@ class Adminpju extends BaseController
 		$jalan = $this->model->getSelectedData('tbl_jalan',$id)->getResult();
 		echo json_encode($jalan);
 	}
+
+	
 }

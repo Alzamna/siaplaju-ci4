@@ -61,7 +61,13 @@
 						<div class="row items-push js-gallery">
 							<?php foreach($dt_foto as $ft){ ?>
 							<div class=" col-sm-6 animated fadeIn">
-								<a class="img-link img-link-zoom-in img-thumb img-lightbox" href="<?php echo base_url('upload/foto/perbaikan/'.$ft->nama_foto);?>">
+									<?php foreach ($dt_foto as $ft): ?>
+										<a class="img-link img-link-zoom-in img-thumb img-lightbox"
+										href="<?= base_url('upload/foto/perbaikan/'.$ft->nama_foto); ?>">
+											<img src="<?= base_url('upload/foto/perbaikan/'.$ft->nama_foto); ?>" 
+												alt="Foto Aspirasi">
+										</a>
+									<?php endforeach; ?>
 									<img class="img-fluid" style="height:200px" src="<?php echo base_url('upload/foto/perbaikan/'.$ft->nama_foto);?>" alt="">
 								</a>
 							</div>

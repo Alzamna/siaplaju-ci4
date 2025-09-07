@@ -11,12 +11,14 @@ class Adminaspirasi extends BaseController
     protected $model;
     protected $session;
     protected $pager;
+    protected $googlemaps;
 
     public function __construct()
     {
         $this->model   = new Model_backend();
         $this->session = Services::session();
         $this->pager   = Services::pager();
+        $this->googlemaps = service('googlemaps'); 
         helper(['url', 'text']);
 
         // Cek login
@@ -27,27 +29,35 @@ class Adminaspirasi extends BaseController
 
     public function index()
     {
-        $dari = $this->request->getUri()->getSegment(3) ?? 0;
+        $perPage = 20;
+
+        $uri   = service('uri');
+        $dari  = ($uri->getTotalSegments() >= 3) ? (int) $uri->getSegment(3) : 0;
 
         $num = $this->model->getJmlAspirasi();
-        $perPage = 20;
+
+        $aspirasi = $this->model->getAllAspirasi($perPage, $dari);
+
+        $pager = \Config\Services::pager();
+        $pager_links = $pager->makeLinks($dari, $perPage, $num);
 
         $data = [
             'title'          => 'Aspirasi LPJU Kabupaten Tegal',
             'open_aspirasi'  => 'open',
             'aktif_aspirasi' => 'active',
-            'dt_aspirasi'    => $this->model->getAllAspirasi($perPage, $dari),
-            'pager'          => $this->pager->makeLinks($dari, $perPage, $num),
+            'dt_aspirasi'    => $aspirasi,
+            'pager'          => $pager_links,
             'start'          => $dari,
         ];
 
         return view('pages/v_header', $data)
-             . view('aspirasi/v_aspirasi')
-             . view('pages/v_footer');
+            . view('aspirasi/v_aspirasi', $data)
+            . view('pages/v_footer');
     }
 
     public function verifikasi($id = null)
     {
+        // Konfigurasi peta
         $confmap = [
             'center'                       => '-6.99926531, 109.13596825',
             'zoom'                         => 11,
@@ -60,21 +70,28 @@ class Adminaspirasi extends BaseController
             'onclick'                      => 'updateKoordinat(event.latLng.lat(), event.latLng.lng());setMapOnAll(map);clearMarker(); createMarker_map({ map: map, position:event.latLng });',
         ];
 
+        // Panggil library googlemaps
         $googlemaps = service('googlemaps');
         $googlemaps->initialize($confmap);
 
+        // Ambil data aspirasi dari model
+        $dtAspirasi = $this->model->getDataAspirasi($id);
+
+        // Siapkan data untuk dikirim ke view
         $data = [
             'title'          => 'Verifikasi Aspirasi LPJU',
             'open_aspirasi'  => 'open',
             'aktif_aspirasi' => 'active',
-            'dt_aspirasi'    => $this->model->getDataAspirasi($id),
+            'dt_aspirasi'    => $dtAspirasi,
             'peta'           => $googlemaps->create_map(),
         ];
 
+        // Return view dengan template CI4
         return view('pages/v_header', $data)
-             . view('aspirasi/v_verifikasi')
-             . view('pages/v_footer');
+            . view('aspirasi/v_verifikasi')
+            . view('pages/v_footer');
     }
+
 
     public function lihat($id = null)
     {

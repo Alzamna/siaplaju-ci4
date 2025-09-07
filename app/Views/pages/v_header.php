@@ -87,11 +87,11 @@
         -->
 		
 		<?php 
-			$akses = $this->session->userdata('id_akses');
-			$admin = $this->session->userdata('id_akses') == '1';
-			$operator = $this->session->userdata('id_akses') == '2';
-			$pengguna = $this->session->userdata('id_akses') == '3';
-		?>
+            $akses    = session()->get('id_akses');
+            $admin    = ($akses == '1');
+            $operator = ($akses == '2');
+            $pengguna = ($akses == '3');
+        ?>
 		
         <div id="page-container" class="sidebar-o side-scroll main-content-boxed" >
             <!-- Sidebar -->
@@ -149,7 +149,9 @@
                                 </a>
                                 <ul class="list-inline mt-10">
                                     <li class="list-inline-item">
-                                        <a class="link-effect text-dual-primary-dark font-size-xs font-w600 text-uppercase" href="#"><?php echo $this->session->userdata('status');?></a>
+                                    <a class="link-effect text-dual-primary-dark font-size-xs font-w600 text-uppercase" href="#">
+                                        <?php echo session()->get('status'); ?>
+                                    </a>
                                     </li>
                                     <li class="list-inline-item">
                                         <!-- Layout API, functionality initialized in Codebase() -> uiApiLayout() -->
@@ -276,7 +278,7 @@
                         <!-- User Dropdown -->
                         <div class="btn-group" role="group">
                             <button type="button" class="btn btn-rounded btn-dual-secondary" id="page-header-user-dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                               <?php echo $this->session->userdata('nama');?><i class="fa fa-angle-down ml-5"></i>
+                               <?php echo session()->get('nama'); ?><i class="fa fa-angle-down ml-5"></i>
                             </button>
                             <div class="dropdown-menu dropdown-menu-right min-width-150" aria-labelledby="page-header-user-dropdown">
                                 <a class="dropdown-item" href="#">
