@@ -203,10 +203,11 @@ class Adminpengaduan extends BaseController
 					'allowed_types'=>'jpg|png|jpeg|bmp',
 					'max_size'=>'0',
 				);
-				$file = $this->request->getFile('foto');
-				if ($file->isValid() && !$file->hasMoved()) {
-					$newName = $file->getRandomName();
-					$file->move(FCPATH . 'upload/temp', $newName);
+				$files = $this->request->getFileMultiple('foto');
+				foreach ($files as $i => $file) {
+					if ($file->isValid() && !$file->hasMoved()) {
+						$newName = $file->getRandomName();
+						$file->move(FCPATH . 'upload/temp', $newName);
 
 					// Resize image
 					\Config\Services::image()
@@ -214,7 +215,11 @@ class Adminpengaduan extends BaseController
 						->resize(1200, 800, true, 'auto')
 						->save(FCPATH . 'upload/foto/pengaduan/' . $newName);
 				}
-
+				$files = $this->request->getFileMultiple('foto');
+				if (empty($files) || (count($files) == 1 && $files[0]->getError() == 4)) {
+					return redirect()->back()->with('error', 'Harap upload minimal 1 foto.');
+				}
+			}
 			}
 		}
 
@@ -450,31 +455,35 @@ class Adminpengaduan extends BaseController
 		. view('pages/v_footer');
 	}
 	
-	public function tolak(){
-		$id['id_pengaduan'] = $this->request->getUri()->getSegment(3);
-		$idx['id_pengaduan'] = $this->request->getUri()->getSegment(3);
+	public function tolak($id_pengaduan)
+	{
 		$tgl = date('Y-m-d H:i:s');
 
-		$data=array(
-			'aktif'=>0,
-			'status'=>0,
-		);
-        $tindakan=array(
-			'id_pengaduan'=>$id,
-			'tgl_tindakan'=>$tgl=date('Y-m-d H:i:s'),
-			'tindakan'=>$this->request->getPost('tindakan'),
-		);
-		$status=array(
-			'id_pengaduan'=>$id,
-			'status'=>0,
-			'keterangan'=>'Pengaduan Ditolak',
-			'tgl_status'=>$tgl,
-		);
-		$this->model->updateData('tbl_pengaduan',$data,$idx);
-		$this->model->insertData('tbl_tindakan',$tindakan);
-		$this->model->insertData('tbl_pengaduan_status',$status);
+		$data = [
+			'aktif' => 0,
+			'status' => 0,
+		];
+
+		$tindakan = [
+			'id_pengaduan' => $id_pengaduan,
+			'tgl_tindakan' => $tgl,
+			'tindakan' => $this->request->getPost('tindakan'),
+		];
+
+		$status = [
+			'id_pengaduan' => $id_pengaduan,
+			'status' => 0,
+			'keterangan' => 'Pengaduan Ditolak',
+			'tgl_status' => $tgl,
+		];
+
+		$this->model->updateData('tbl_pengaduan', $data, ['id_pengaduan' => $id_pengaduan]);
+		$this->model->insertData('tbl_tindakan', $tindakan);
+		$this->model->insertData('tbl_pengaduan_status', $status);
+
 		return redirect()->to('adminpengaduan');
 	}
+
 	
 	public function hapus()
 	{

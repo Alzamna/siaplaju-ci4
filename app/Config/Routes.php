@@ -145,7 +145,7 @@ $routes->group('adminpengaduan', function($routes) {
     $routes->get('hapus/(:num)', 'Adminpengaduan::hapus/$1');
 
     // Tolak pengaduan
-    $routes->get('tolak/(:num)', 'Adminpengaduan::tolak/$1');
+    $routes->match(['get','post'], 'adminpengaduan/tolak/(:segment)', 'Adminpengaduan::tolak/$1');
 
     // Verifikasi pengaduan
     $routes->get('verifikasi/(:num)', 'Adminpengaduan::verifikasi/$1');
@@ -157,6 +157,10 @@ $routes->group('adminpengaduan', function($routes) {
     // Input perbaikan
     $routes->get('inputperbaikan/(:num)', 'Adminpengaduan::inputperbaikan/$1');
     $routes->post('inputperbaikan/(:num)', 'Adminpengaduan::proses_perbaikan/$1');
+    
+    // Input hasil perbaikan
+    $routes->get('inputperbaikan/(:segment)', 'Adminpengaduan::inputperbaikan/$1');
+    $routes->post('proses_perbaikan/(:segment)', 'Adminpengaduan::proses_perbaikan/$1');
 
     // Lihat pengaduan
     $routes->get('lihat/(:num)', 'Adminpengaduan::lihat/$1');

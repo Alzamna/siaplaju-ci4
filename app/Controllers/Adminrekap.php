@@ -50,42 +50,34 @@ class Adminrekap extends BaseController
 	}
 	
 	public function fpju(){
-		if($this->request->getPost('kecamatan')!=""){
-			$kec = $this->request->getPost('kecamatan');
-		} else {
-			$kec = "%%";
-		}
-		
-		if($this->request->getPost('jalan')!=""){
-			$jln = $this->request->getPost('jalan');
-		} else {
-			$jln = "%%";
-		}
-		
-		if($this->request->getPost('jenis')!=""){
-			$jns = $this->request->getPost('jenis');
-		} else {
-			$jns = "%%";
-		}
-		
-		if($this->request->getPost('kondisi')!=""){
-			$kds = $this->request->getPost('kondisi');
-		} else {
-			$kds = "%%";
-		}
-		
+		$kec = $this->request->getPost('kecamatan') ?: "%%";
+		$jln = $this->request->getPost('jalan') ?: "%%";
+		$jns = $this->request->getPost('jenis') ?: "%%";
+		$kds = $this->request->getPost('kondisi') ?: "%%";
+
 		$data=array(
 			'title'=>'Rekap PJU Kabupaten Tegal',
 			'open_rekap'=>'open',
 			'rekap_pju'=>'active',
 			'dt_kecamatan'=>$this->model->getAllKecamatan(),
+			'dt_jenis' => $this->model->getAllJenisLampu(),   
+			'dt_kondisi' => $this->model->getAllKondisiLampu(), 
 			'dt_rekap'=>$this->model->getFilterRekapPju($kec,$jln,$jns,$kds),
 			'export'=>'?kec='.$kec.'&jln='.$jln.'&jns='.$jns.'&kds='.$kds,
+
+			'vpul' => $this->request->getPost('pulau') ?: 'SEMUA',
+			'vpro' => $this->request->getPost('provinsi') ?: 'SEMUA',
+			'vkab' => $this->request->getPost('kabupaten') ?: 'SEMUA',
+			'vjns' => $this->request->getPost('jenis') ?: 'SEMUA',
+			'vpdk' => $this->request->getPost('produk') ?: 'SEMUA',
+			'vdst' => $this->request->getPost('distributor') ?: 'SEMUA',
 		);
+		
+
 		echo view('pages/v_header',$data);
 		echo view('rekap/v_rekap_pju');
 		echo view('pages/v_footer');
-	}
+}
 	
 	public function export_pju(){
 		$kec = $this->request->getPost('kec', TRUE);

@@ -75,4 +75,41 @@
 			x--; //Decrement field counter
 		});
 	});
+
+	$(document).ready(function(){
+    var maxField = 5; 
+    var addButton = $('.add_foto'); 
+    var wrapper = $('#wrap_foto'); 
+    var fieldHTML = '<div class="form-group row"><label class="col-lg-2 col-form-label" for="foto">Upload Foto</label><div class="col-lg-4"><input type="file" name="foto[]"></div><a href="javascript:void(0);" class="hapus_foto" title="Hapus foto"><label class="col-form-label"><i class="si si-close fa-1x"></i></label></a></div>'; 
+    var x = 1; 
+    
+    // Tambah input foto
+    $(addButton).click(function(){ 
+        if(x < maxField){ 
+            x++; 
+            $(wrapper).append(fieldHTML); 
+        }
+    });
+    
+    // Hapus input foto
+    $(wrapper).on('click', '.hapus_foto', function(e){ 
+        e.preventDefault();
+        $(this).parent('div').remove(); 
+        x--; 
+    });
+
+    // 🚨 Validasi sebelum submit
+    $('form').on('submit', function(e){
+        let valid = false;
+        $(this).find('input[type="file"][name="foto[]"]').each(function(){
+            if($(this).val() !== '') {
+                valid = true;
+            }
+        });
+        if(!valid){
+            e.preventDefault(); // cegah submit
+            alert('Harap upload minimal 1 foto sebelum mengirim!');
+        }
+    });
+	});
 </script>

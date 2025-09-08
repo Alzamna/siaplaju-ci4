@@ -177,7 +177,7 @@
 <div class="modal fade" id="hapus-<?php echo $row->id_pengaduan;?>" tabindex="-1" role="dialog" aria-labelledby="hapus-pengaduan" aria-hidden="true">
 	<div class="modal-dialog modal-lg modal-dialog-popout" role="document">
 		<div class="modal-content">
-		<form action="<?php echo site_url('adminpengaduan/tolak/'.$row->id_pengaduan);?>" method="post">
+		<form method="post" action="<?= base_url('adminpengaduan/tolak/'.$row->id_pengaduan) ?>">
 		<?= csrf_field() ?>	
 		<div class="block block-themed block-transparent mb-0">
 				<div class="block-header">
