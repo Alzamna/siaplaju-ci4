@@ -3,7 +3,6 @@
 namespace App\Controllers;
 
 use App\Models\Model_backend;
-use CodeIgniter\Controller;
 
 class Adminpengaduan extends BaseController
 {
@@ -120,7 +119,7 @@ class Adminpengaduan extends BaseController
 		$this->model->updateData('tbl_pengaduan',$data,$idx);
 		$this->model->insertData('tbl_tindakan',$tindakan);
 		$this->model->insertData('tbl_pengaduan_status',$status);
-		return redirect()->to('adminpengaduan');
+		return redirect()->to(site_url('adminpengaduan'));
 	}
 	
 	public function proses_pengaduan(){
@@ -144,7 +143,7 @@ class Adminpengaduan extends BaseController
 		$this->model->updateData('tbl_pengaduan',$data,$idx);
 		$this->model->insertData('tbl_tindakan',$tindakan);
 		$this->model->insertData('tbl_pengaduan_status',$status);
-		return redirect()->to('adminpengaduan');
+		return redirect()->to(site_url('adminpengaduan'));
 	}
 	
 	public function inputperbaikan(){
@@ -207,13 +206,12 @@ class Adminpengaduan extends BaseController
 				foreach ($files as $i => $file) {
 					if ($file->isValid() && !$file->hasMoved()) {
 						$newName = $file->getRandomName();
-						$file->move(FCPATH . 'upload/temp', $newName);
+						$file->move(WRITEPATH . 'uploads/temp', $newName);
 
-					// Resize image
 					\Config\Services::image()
-						->withFile(FCPATH . 'upload/temp/' . $newName)
+						->withFile(WRITEPATH . 'uploads/temp/' . $newName)
 						->resize(1200, 800, true, 'auto')
-						->save(FCPATH . 'upload/foto/pengaduan/' . $newName);
+						->save(WRITEPATH . 'uploads/foto/pengaduan/' . $newName);
 				}
 				$files = $this->request->getFileMultiple('foto');
 				if (empty($files) || (count($files) == 1 && $files[0]->getError() == 4)) {
@@ -240,7 +238,7 @@ class Adminpengaduan extends BaseController
 		$this->model->updateData('tbl_pengaduan',$data,$idx);
 		$this->model->insertData('tbl_tindakan',$tindakan);
 		$this->model->insertData('tbl_pengaduan_status',$status);
-		return redirect()->to('adminpengaduan');
+		return redirect()->to(site_url('adminpengaduan'));
 	}
 	
 	public function lihat(){
@@ -395,12 +393,12 @@ class Adminpengaduan extends BaseController
 				$this->model->insertData('tbl_tindakan',$tindakan);
 				$image = \Config\Services::image()
 				->withFile('./upload/temp/' . $upload['file_name'])
-				->resize(1200, 800, true, 'auto') // maintain_ratio TRUE
+				->resize(1200, 800, true, 'auto') 
 				->save('./upload/foto/pengaduan/' . $upload['file_name']);
 
 			}
 		}
-		return redirect()->to('adminpengaduan');
+		return redirect()->to(site_url('adminpengaduan'));
 	}
 	
 	public function peta(){
@@ -481,7 +479,7 @@ class Adminpengaduan extends BaseController
 		$this->model->insertData('tbl_tindakan', $tindakan);
 		$this->model->insertData('tbl_pengaduan_status', $status);
 
-		return redirect()->to('adminpengaduan');
+		return redirect()->to(site_url('adminpengaduan'));
 	}
 
 	
@@ -490,7 +488,7 @@ class Adminpengaduan extends BaseController
 		$id = $this->request->getUri()->getSegment(3);
 
 		if (!$id) {
-			return redirect()->to('adminpengaduan');
+			return redirect()->to(site_url('adminpengaduan'));
 		}
 
 		$this->model->deleteData('tbl_pengaduan', ['id_pengaduan' => $id]);
@@ -498,7 +496,7 @@ class Adminpengaduan extends BaseController
 		$this->model->deleteData('tbl_tindakan_foto', ['id_pengaduan' => $id]);
 		$this->model->deleteData('tbl_pengaduan_status', ['id_pengaduan' => $id]);
 
-		return redirect()->to('adminpengaduan');
+		return redirect()->to(site_url('adminpengaduan'));
 	}
 
 	

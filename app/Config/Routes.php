@@ -41,17 +41,17 @@ $routes->get('kontak',                'Kontak::index');
 // -------------------
 // Dashboard
 // -------------------
-$routes->get('dashboard', 'Dashboard::index');
-$routes->get('profil', 'Dashboard::profil');
-$routes->get('setting', 'Dashboard::setting');
+$routes->get('dashboard', 'Dashboard::index', ['filter' => 'auth']);
+$routes->get('profil', 'Dashboard::profil', ['filter' => 'auth']);
+$routes->get('setting', 'Dashboard::setting', ['filter' => 'auth']);
 
 // Login & Auth
 $routes->get('login', 'Login::index');    
 $routes->post('login', 'Login::index');   
-$routes->get('login/logout', 'Login::logout'); 
+$routes->get('logout', 'Login::logout');
 
 // Admin Master
-$routes->group('adminmaster', function($routes) {
+$routes->group('adminmaster', ['filter' => 'auth'], function($routes) {
     // Admin User
     $routes->get('admin', 'Adminmaster::admin');
     $routes->post('proses_tambah_admin', 'Adminmaster::proses_tambah_admin');
@@ -79,7 +79,7 @@ $routes->group('adminmaster', function($routes) {
 
 
 // Admin Aspirasi
-$routes->group('adminaspirasi', function($routes) {
+$routes->group('adminaspirasi', ['filter' => 'auth'], function($routes) {
     $routes->get('/', 'Adminaspirasi::index');
     $routes->match(['get', 'post'], 'verifikasi/(:segment)', 'Adminaspirasi::verifikasi/$1');
     $routes->get('lihat/(:segment)', 'Adminaspirasi::lihat/$1');
@@ -88,7 +88,7 @@ $routes->group('adminaspirasi', function($routes) {
 });
 
 // Admin Jalan
-$routes->group('adminjalan', function($routes) {
+$routes->group('adminjalan', ['filter' => 'auth'], function($routes) {
     $routes->get('/', 'Adminjalan::index');
     $routes->post('tambah', 'Adminjalan::proses_tambah_jalan');
     $routes->post('proses_edit_jalan/(:num)', 'Adminjalan::proses_edit_jalan/$1');
@@ -115,7 +115,7 @@ $routes->post('adminpju/get_jalan',    'Adminpju::get_jalan');
 
 
 // Admin Rekap
-$routes->group('adminrekap', function($routes) {
+$routes->group('adminrekap', ['filter' => 'auth'], function($routes) {
     // Halaman rekap PJU
     $routes->get('pju', 'Adminrekap::pju');
     $routes->post('fpju', 'Adminrekap::fpju'); 
@@ -129,7 +129,7 @@ $routes->group('adminrekap', function($routes) {
 
 
 // Admin Pengaduan
-$routes->group('adminpengaduan', function($routes) {
+$routes->group('adminpengaduan', ['filter' => 'auth'], function($routes) {
     // Dashboard / list pengaduan
     $routes->get('/', 'Adminpengaduan::index');
 
@@ -170,4 +170,24 @@ $routes->group('adminpengaduan', function($routes) {
 
     // Cari pengaduan
     $routes->post('cari', 'Adminpengaduan::cari');
+
+    // -------------------
+    // Admin Pengaduan
+    // -------------------
+    $routes->get('adminpengaduan',                'Adminpengaduan::index');
+    $routes->get('adminpengaduan/verifikasi/(:num)', 'Adminpengaduan::verifikasi/$1');
+    $routes->post('adminpengaduan/proses_verifikasi/(:num)', 'Adminpengaduan::proses_verifikasi/$1');
+    $routes->post('adminpengaduan/proses_pengaduan/(:num)',  'Adminpengaduan::proses_pengaduan/$1');
+    $routes->get('adminpengaduan/inputperbaikan/(:num)',     'Adminpengaduan::inputperbaikan/$1');
+    $routes->post('adminpengaduan/proses_perbaikan/(:num)',  'Adminpengaduan::proses_perbaikan/$1');
+    $routes->get('adminpengaduan/lihat/(:num)',              'Adminpengaduan::lihat/$1');
+    $routes->get('adminpengaduan/tambah',                    'Adminpengaduan::tambah');
+    $routes->post('adminpengaduan/proses_tambah',            'Adminpengaduan::proses_tambah');
+    $routes->get('adminpengaduan/peta',                      'Adminpengaduan::peta');
+    $routes->post('adminpengaduan/cari',                     'Adminpengaduan::cari');
+    $routes->post('adminpengaduan/tolak/(:num)',             'Adminpengaduan::tolak/$1');
+    $routes->get('adminpengaduan/hapus/(:num)',              'Adminpengaduan::hapus/$1');
+    $routes->get('adminpengaduan/edit/(:num)',               'Adminpengaduan::edit/$1');
+    $routes->post('adminpengaduan/proses_edit/(:num)',       'Adminpengaduan::proses_edit/$1');
+
 });

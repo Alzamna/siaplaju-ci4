@@ -3,7 +3,6 @@
 namespace App\Controllers;
 
 use App\Models\Model_backend;
-use CodeIgniter\Controller;
 
 class Adminjalan extends BaseController
 {

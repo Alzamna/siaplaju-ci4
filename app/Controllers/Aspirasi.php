@@ -2,9 +2,7 @@
 
 namespace App\Controllers;
 
-use App\Libraries\Googlemaps;
 use App\Models\Model_app;
-use CodeIgniter\Controller;
 use CodeIgniter\I18n\Time;
 
 class Aspirasi extends BaseController
@@ -14,9 +12,9 @@ class Aspirasi extends BaseController
 
     public function __construct()
     {
-        $this->model = new Model_app();
         helper(['form', 'text']);
-        $this->googlemaps = new Googlemaps(); 
+        $this->model = model(Model_app::class);
+        $this->googlemaps = service('googlemaps'); 
     }
 
     public function index()
@@ -59,10 +57,8 @@ class Aspirasi extends BaseController
             'placesAutocompleteOnChange' => 'PlacesLokasi();',
         ];
 
-        // inisialisasi googlemaps (pastikan sudah di-porting ke CI4 sebagai service/library)
         $this->googlemaps->initialize($confmap);
 
-        // hasil create_map
         $peta = $this->googlemaps->create_map();
 
         $data = [
@@ -81,14 +77,13 @@ class Aspirasi extends BaseController
     {
         $id = $this->model->getKodeAspirasi();
 
-        // multiple upload
-        $files = $this->request->getFiles();
-        if ($files && isset($files['foto'])) {
-            foreach ($files['foto'] as $i => $img) {
+        $files = $this->request->getFileMultiple('foto');
+        if ($files) {
+            foreach ($files as $i => $img) {
                 if ($img->isValid() && !$img->hasMoved()) {
                     $newName = 'ASP' . $id . $i . '.' . $img->getExtension();
-                    $img->move(FCPATH . 'upload/foto/aspirasi/', $newName);
-
+                    $img->move(FCPATH . 'upload/foto/aspirasi', $newName);
+                    
                     $this->model->insertData('tbl_aspirasi_foto', [
                         'id_aspirasi' => $id,
                         'nama_foto'   => $newName

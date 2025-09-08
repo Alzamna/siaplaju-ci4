@@ -3,7 +3,6 @@
 namespace App\Controllers;
 
 use App\Models\Model_backend;
-use CodeIgniter\Controller;
 use Config\Services;
 
 class Adminpju extends BaseController
@@ -260,22 +259,6 @@ class Adminpju extends BaseController
 		);
 		$this->googlemaps->initialize($confmap);
 		
-		/*
-		$pju = $this->model->getPetaPju();
-		foreach($pju as $row){
-			if($row->kondisi=='H'){
-				$icon = base_url().'/assets/img/lampu-on.png';
-			} else {
-				$icon = base_url().'/assets/img/lampu-off.png';
-			}
-			$marker=array(
-				'position'=>$row->lat.','.$row->lng,
-				'infowindow_content'=>'<center><h6>'.$row->nama_jalan.'</h6></center><table><tr><td><b>ID PJU</b></td><td>: '.$row->id_pju.'</td></tr><tr><td><b>NAMA JALAN</b></td><td>: '.$row->nama_jalan.'</td></tr><tr><td><b>KECAMATAN</b></td><td>: '.$row->nama_kecamatan.'</td></tr><tr><td><b>JENIS LAMPU</b></td><td>: '.$row->jenis.'</td></tr><tr><td><b>DAYA LAMPU</b></td><td>: '.$row->daya.'</td></tr><tr><td><b>KONDISI LAMPU</b></td><td>: '.$row->kondisi.'</td></tr></table><br/><center><a href="'.site_url('adminpju/lihat/'.$row->id_pju).'">Lihat Selengkapnya</a></center>',
-				'icon'=>$icon,
-			);
-			$this->googlemaps->add_marker($marker);
-		}
-		*/
 		
 		$data=array(
 			'title'=>'Peta Lampu PJU Kabupaten Tegal',

@@ -89,14 +89,14 @@ class Adminrekap extends BaseController
 		$objPHPExcel = new PHPExcel();
 
 		$objPHPExcel->getProperties()
-			->setCreator("ADMIN - SIAPLAJU") //creator
-			->setTitle("REKAP PJU KAB TEGAL");  //file title
+			->setCreator("ADMIN - SIAPLAJU") 
+			->setTitle("REKAP PJU KAB TEGAL");  
 
-		$objset = $objPHPExcel->setActiveSheetIndex(0); //inisiasi set object
-		$objget = $objPHPExcel->getActiveSheet();  //inisiasi get object
+		$objset = $objPHPExcel->setActiveSheetIndex(0); 
+		$objget = $objPHPExcel->getActiveSheet();  
 
-		$objget->setTitle('REKAP PJU'); //sheet title
-		//Warna header tabel
+		$objget->setTitle('REKAP PJU'); 
+		
 		$objget->getStyle("A1:I1")->applyFromArray(
 			array(
 				'fill' => array(
@@ -109,7 +109,7 @@ class Adminrekap extends BaseController
 			)
 		);
 		
-		//table header
+		
 		$cols = array("A","B","C","D","E","F","G","H","I");
 		 
 		$val = array("NO","RUAS JALAN","ID PEL","NO GARDU","NO PAL","JENIS","DAYA","POSISI","KONDISI");
@@ -183,9 +183,9 @@ class Adminrekap extends BaseController
 		$objPHPExcel->setActiveSheetIndex(0);  
 		$filename = "REKAP PJU KAB TEGAL.xlsx";
 		   
-		  header('Content-Type: application/vnd.ms-excel'); //mime type
-		  header('Content-Disposition: attachment;filename="'.$filename.'"'); //tell browser what's the file name
-		  header('Cache-Control: max-age=0'); //no cache
+		  header('Content-Type: application/vnd.ms-excel'); 
+		  header('Content-Disposition: attachment;filename="'.$filename.'"'); 
+		  header('Cache-Control: max-age=0'); 
 
 		$objWriter = IOFactory::createWriter($objPHPExcel, 'Excel2007');                
 		$objWriter->save('php://output');
@@ -256,14 +256,14 @@ class Adminrekap extends BaseController
 		$objPHPExcel = new PHPExcel();
 
 		$objPHPExcel->getProperties()
-			->setCreator("ADMIN - SIAPLAJU") //creator
-			->setTitle("REKAP PENGADUAN PJU");  //file title
+			->setCreator("ADMIN - SIAPLAJU") 
+			->setTitle("REKAP PENGADUAN PJU");  
 
-		$objset = $objPHPExcel->setActiveSheetIndex(0); //inisiasi set object
-		$objget = $objPHPExcel->getActiveSheet();  //inisiasi get object
+		$objset = $objPHPExcel->setActiveSheetIndex(0); 
+		$objget = $objPHPExcel->getActiveSheet();  
 
-		$objget->setTitle('REKAP PENGADUAN PJU'); //sheet title
-		//Warna header tabel
+		$objget->setTitle('REKAP PENGADUAN PJU'); 
+		
 		$objget->getStyle("A1:H1")->applyFromArray(
 			array(
 				'fill' => array(
@@ -276,7 +276,7 @@ class Adminrekap extends BaseController
 			)
 		);
 		
-		//table header
+		
 		$cols = array("A","B","C","D","E","F","G","H");
 		 
 		$val = array("NO","ID PENGADUAN","TGL PENGADUAN","MEDIA","PELAPOR","LAPORAN","RUAS JALAN","STATUS");
@@ -284,7 +284,6 @@ class Adminrekap extends BaseController
 		for ($a=0;$a<8; $a++) {
 			$objset->setCellValue($cols[$a].'1', $val[$a]);
 		 
-			//Setting lebar cell
 			$objPHPExcel->getActiveSheet()->getColumnDimension('A')->setAutoSize(true);
 			$objPHPExcel->getActiveSheet()->getColumnDimension('B')->setAutoSize(true);
 			$objPHPExcel->getActiveSheet()->getColumnDimension('C')->setAutoSize(true);
@@ -347,9 +346,9 @@ class Adminrekap extends BaseController
 		$objPHPExcel->setActiveSheetIndex(0);  
 		$filename = "REKAP PENGADUAN PJU KABUPATEN TEGAL.xlsx";
 		   
-		  header('Content-Type: application/vnd.ms-excel'); //mime type
-		  header('Content-Disposition: attachment;filename="'.$filename.'"'); //tell browser what's the file name
-		  header('Cache-Control: max-age=0'); //no cache
+		  header('Content-Type: application/vnd.ms-excel'); 
+		  header('Content-Disposition: attachment;filename="'.$filename.'"'); 
+		  header('Cache-Control: max-age=0'); 
 
 		$objWriter = IOFactory::createWriter($objPHPExcel, 'Excel2007');                
 		$objWriter->save('php://output');

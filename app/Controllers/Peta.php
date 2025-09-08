@@ -11,7 +11,7 @@ class Peta extends BaseController
     public function __construct()
     {
         $this->model = new Model_app();
-        helper(['url', 'form']); // biar site_url & base_url bisa dipakai
+        helper(['url', 'form']); 
     }
 
     public function index()
@@ -23,16 +23,13 @@ class Peta extends BaseController
             'map_type'   => 'HYBRID',
         ];
 
-        // TODO: implementasikan googlemaps library di CI4 atau handle via JS
-        // $this->googlemaps->initialize($confmap);
-
         $data = [
             'title'        => 'Peta Lampu PJU Kabupaten Tegal',
             'aktif_peta'   => 'active',
             'dt_kecamatan' => $this->model->getAllKecamatan(),
             'dt_jenis'     => $this->model->getAllJenisLampu(),
             'dt_kondisi'   => $this->model->getAllKondisiLampu(),
-            'peta'         => '' // $this->googlemaps->create_map(),
+            'peta'         => '' 
         ];
 
         return view('home/pages/v_header', $data)
@@ -54,7 +51,6 @@ class Peta extends BaseController
             'map_type'   => 'HYBRID',
         ];
 
-        // $this->googlemaps->initialize($confmap);
 
         foreach ($pju as $row) {
             $icon = ($row->kondisi == 'H') ? base_url('assets/img/lampu-on.png') : base_url('assets/img/lampu-off.png');
@@ -75,7 +71,6 @@ class Peta extends BaseController
                 'icon'               => $icon,
             ];
 
-            // $this->googlemaps->add_marker($marker);
         }
 
         $data = [
@@ -86,7 +81,7 @@ class Peta extends BaseController
             'dt_kecamatan' => $this->model->getAllKecamatan(),
             'dt_jenis'     => $this->model->getAllJenisLampu(),
             'dt_kondisi'   => $this->model->getAllKondisiLampu(),
-            'peta'         => '' // $this->googlemaps->create_map(),
+            'peta'         => '' 
         ];
 
         return view('home/pages/v_header', $data)
@@ -109,7 +104,6 @@ class Peta extends BaseController
                 'center'     => $row->lat . ',' . $row->lng,
                 'zoom'       => 19,
             ];
-            // $this->googlemaps->initialize($confmap);
 
             $icon = ($row->kondisi == 'H') ? base_url('assets/img/lampu-on.png') : base_url('assets/img/lampu-off.png');
 
@@ -118,13 +112,12 @@ class Peta extends BaseController
                 'animation' => 'DROP',
                 'icon'      => $icon,
             ];
-            // $this->googlemaps->add_marker($marker);
         }
 
         $data = [
             'title'      => 'Lihat Lampu PJU',
             'aktif_peta' => 'active',
-            'peta'       => '', // $this->googlemaps->create_map(),
+            'peta'       => '', 
             'dt_pju'     => $pju,
         ];
 

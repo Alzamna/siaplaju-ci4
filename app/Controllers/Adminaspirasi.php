@@ -3,7 +3,6 @@
 namespace App\Controllers;
 
 use App\Models\Model_backend;
-use CodeIgniter\Controller;
 use Config\Services;
 
 class Adminaspirasi extends BaseController

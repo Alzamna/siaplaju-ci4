@@ -1,8 +1,7 @@
 <?php 
 namespace App\Controllers;
 
-use App\Models\Model_backend;   // model yang kamu pakai
-use CodeIgniter\Controller;
+use App\Models\Model_backend;   
 
 class Adminmaster extends BaseController{
 	protected $model;
@@ -13,7 +12,7 @@ class Adminmaster extends BaseController{
 	{
 		$this->model = new Model_backend();
 		$this->session = \Config\Services::session();
-		helper('date'); // load helper
+		helper('date'); 
 	}
 	
 	public function admin(){
@@ -141,11 +140,11 @@ class Adminmaster extends BaseController{
 		$perPage = 20;
 		$dari = ($page - 1) * $perPage;
 
-		$num = $this->model->getJmlJalan(); // total rows
+		$num = $this->model->getJmlJalan(); 
 		$dt_jalan = $this->model->getAllJalan($perPage, $dari);
 
 		$pager = \Config\Services::pager();
-		$pager->makeLinks($page, $perPage, $num); // bikin link manual
+		$pager->makeLinks($page, $perPage, $num); 
 
 		$data = [
 			'title' => 'Data Jalan Kabupaten Tegal',

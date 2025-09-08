@@ -16,7 +16,6 @@ class Kontak extends BaseController
         $this->model = new Model_app();
         helper(['date']);
 
-        // kalau googlemaps sudah dijadikan service di CI4
         $this->googlemaps = new Googlemaps();
     }
 

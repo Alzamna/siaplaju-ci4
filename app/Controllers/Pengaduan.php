@@ -1,10 +1,7 @@
 <?php 
 namespace App\Controllers;
 
-use App\Models\Model;
 use App\Models\Model_app;
-use CodeIgniter\Files\File;
-
 
 class Pengaduan extends BaseController
 {
@@ -28,9 +25,7 @@ class Pengaduan extends BaseController
 	
 	public function index()
     {
-        helper('text'); // buat word_limiter di view
-
-        // ambil segment ke-3 untuk pagination offset
+        helper('text'); 
         $dari = $this->request->getUri()->getTotalSegments() >= 3 
             ? (int) $this->request->getUri()->getSegment(3) 
             : 0;
@@ -38,10 +33,8 @@ class Pengaduan extends BaseController
         $perPage = 12; 
         $num     = $this->model->getJmlPengaduan();
 
-        // data dari model
         $pengaduan = $this->model->getAllPengaduan($perPage, $dari);
 
-        // pagination bawaan CI4
         $pager = \Config\Services::pager();
         $links = $pager->makeLinks($dari, $perPage, $num, 'default_full');
 
@@ -113,14 +106,12 @@ class Pengaduan extends BaseController
 					. view('home/pages/v_footer');
 			}
 
-			// Simpan file sementara
 			$file = $this->request->getFile('foto');
 			$newName = $id . '.' . $file->getExtension();
 			$tempPath = WRITEPATH . 'upload/temp/';
 			$finalPath = WRITEPATH . 'upload/pengaduan/';
 
 
-			// Simpan sementara
 			$file->move($tempPath, $newName);
 
 			// Resize
@@ -192,15 +183,15 @@ class Pengaduan extends BaseController
 			'dt_foto'     => $this->model->getSelectedData('tbl_tindakan_foto', $idx),
 
 		);
-		return view('home/pages/v_header',$data);
-		return view('home/pengaduan/v_pengaduan_lihat');
-		return view('home/pages/v_footer');
+		return view('home/pages/v_header',$data)
+		. view('home/pengaduan/v_pengaduan_lihat')
+		. view('home/pages/v_footer');
 	}
 	
 	public function get_jalan()
 	{
 		$id = ['id_kecamatan' => $this->request->getGet('id')];
-		$jalan = $this->model->getSelectedData('tbl_jalan', $id); // sudah array of object
+		$jalan = $this->model->getSelectedData('tbl_jalan', $id); 
 		return $this->response->setJSON($jalan);
 	}
 

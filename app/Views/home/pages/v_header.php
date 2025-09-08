@@ -48,7 +48,7 @@
 					<ul class="top-links list-inline">
 						<?php $session = \Config\Services::session();
 						$status_login = $session->get('login'); if($status_login){ ?>
-						<li class="text-welcome hidden-xs">Selamat datang, <strong><?php echo $this->session->userdata('nama');?></strong></li>
+						<li class="text-welcome hidden-xs">Selamat datang, <strong><?= session('nama'); ?></strong></li>
 						<li>
 							<a class="dropdown-toggle no-text-underline" data-toggle="dropdown" href="#"><i class="fa fa-user hidden-xs"></i> MY ACCOUNT</a>
 							<ul class="dropdown-menu pull-right">

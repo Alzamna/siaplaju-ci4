@@ -3,118 +3,67 @@
 namespace App\Controllers;
 
 use App\Models\Model_app;
-use App\Models\ModelApp;
 use CodeIgniter\Controller;
 
 class Login extends BaseController
 {
     protected $model;
-    protected $validation;
 
     public function __construct()
     {
-        $this->model = new Model_app();
-        $this->validation = \Config\Services::validation();
-        helper(['form', 'date']);
+        $this->model = model(Model_app::class);
+        helper(['form']);
     }
 
     public function index()
     {
-        // Aturan validasi
+        return view('pages/v_login', ['title' => 'Login Admin SIAPLAJU']);
+    }
+
+    public function proses()
+    {
         $rules = [
             'login-username' => 'required',
             'login-password' => 'required'
         ];
 
         if (!$this->validate($rules)) {
-            $data = [
-                'title' => 'Login Admin SIAPLAJU',
-            ];
-            return view('pages/v_login', $data);
-        } else {
-            $hasil = $this->cek_akun();
-            switch ($hasil) {
-                case 'login_sukses':
-                    return redirect()->to('dashboard');
-
-                case 'password_salah':
-                    return view('pages/v_login', [
-                        'title' => 'Login Admin SIAPLAJU',
-                        'error' => 'Login gagal, pastikan password yang anda masukan benar',
-                    ]);
-
-                case 'akun_belum_aktif':
-                    return view('pages/v_login', [
-                        'title' => 'Login Admin SIAPLAJU',
-                        'error' => 'Login gagal, akun tidak aktif. Silahkan hubungi admin',
-                    ]);
-
-                case 'akun_tidak_ditemukan':
-                    return view('pages/v_login', [
-                        'title' => 'Login Admin SIAPLAJU',
-                        'error' => 'Login gagal, pastikan username dan password yang anda masukan benar',
-                    ]);
-            }
+            return redirect()->to('login')->with('error', 'Username dan password wajib diisi!');
         }
-    }
 
-    private function cek_akun()
-    {
         $username = $this->request->getPost('login-username');
         $password = $this->request->getPost('login-password');
 
         $db = \Config\Database::connect();
-        $sql = "SELECT * FROM tbl_user a 
-                INNER JOIN tbl_akses b ON a.id_akses = b.id_akses 
-                WHERE username = ? 
-                LIMIT 1";
-        $result = $db->query($sql, [$username]);
-        $row = $result->getRow();
+        $row = $db->table('tbl_user a')
+                  ->join('tbl_akses b', 'a.id_akses = b.id_akses')
+                  ->where('username', $username)
+                  ->get()
+                  ->getRow();
 
-        if ($result->getNumRows() === 1) {
+        if ($row) {
             if ($row->aktif == 1) {
                 if (password_verify($password, $row->password)) {
-                    $id = ['id_user' => $row->id_user];
-                    $tgl_login = date('Y-m-d H:i:s');
-                    $login = ['last_login' => $tgl_login];
+                    $this->model->updateData('tbl_user', [
+                        'last_login' => date('Y-m-d H:i:s')
+                    ], ['id_user' => $row->id_user]);
 
-                    // update last login
-                    $this->model->updateData('tbl_user', $login, $id);
+                    session()->set([
+                        'id_user'  => $row->id_user,
+                        'id_akses' => $row->id_akses,
+                        'username' => $row->username,
+                        'nama'     => $row->nama,
+                        'status'   => $row->akses,
+                        'login'    => 1, 
+                    ]);
 
-                    // set session
-                    $session_data = [
-                        'id_user'   => $row->id_user,
-                        'id_akses'  => $row->id_akses,
-                        'username'  => $row->username,
-                        'nama'      => $row->nama,
-                        'status'    => $row->akses,
-                        'login'     => true,
-                    ];
-                    $this->session->set($session_data);
-
-                    return 'login_sukses';
-                } else {
-                    return 'password_salah';
+                    return redirect()->to('dashboard');
                 }
-            } else {
-                return 'akun_belum_aktif';
+                return redirect()->to('login')->with('error', 'Password salah!');
             }
-        } else {
-            return 'akun_tidak_ditemukan';
+            return redirect()->to('login')->with('error', 'Akun belum aktif!');
         }
-    }
-
-        protected function isLoggedIn()
-    {
-        if (!$this->session->get('login')) {
-            // Redirect jika belum login
-            return redirect()->to(site_url('login'))->with('error', 'Silahkan login terlebih dahulu')->send();
-        }
-    }
-
-    private function set_session($session_data)
-    {
-        session()->set($session_data);
+        return redirect()->to('login')->with('error', 'Username tidak ditemukan!');
     }
 
     public function logout()

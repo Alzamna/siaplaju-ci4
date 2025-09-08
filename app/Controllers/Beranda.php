@@ -11,7 +11,7 @@ class Beranda extends BaseController
     public function __construct()
     {
         $this->model = new Model_app();
-        helper(['date', 'text']); // load helper CI4
+        helper(['date', 'text']); 
     }
 
     public function index()
